@@ -1,0 +1,1 @@
+DROP SCHEMA game_rental_system CASCADE;
