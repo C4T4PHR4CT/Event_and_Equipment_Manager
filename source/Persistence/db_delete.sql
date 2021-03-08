@@ -1,1 +1,1 @@
-DROP SCHEMA game_rental_system CASCADE;
+DROP SCHEMA event_and_equipment_manager CASCADE;

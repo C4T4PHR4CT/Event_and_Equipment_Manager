@@ -15,6 +15,7 @@ CREATE TABLE _organization (
 CREATE TABLE _user (
 	us_id serial PRIMARY KEY,
     us_name varchar(32) NOT NULL,
+    us_password varchar(32) NOT NULL,
     us_permission integer REFERENCES _permission(pe_id) ON DELETE CASCADE NOT NULL,
     us_organization integer REFERENCES _organization(og_id) ON DELETE CASCADE
 );
@@ -41,12 +42,15 @@ CREATE TRIGGER _event_default_end
 CREATE TABLE _equipment (
     eq_id serial PRIMARY KEY,
     eq_name varchar(512) NOT NULL,
-    eq_category varchar(32)
+    eq_category varchar(32),
+    eq_note varchar(512),
+    eq_organization integer REFERENCES _organization(og_id) ON DELETE CASCADE NOT NULL
 );
 
 CREATE TABLE _event_equipment_connection (
 	ev_id integer REFERENCES _event(ev_id) ON DELETE CASCADE,
-    eq_id integer REFERENCES _equipment(eq_id) ON DELETE CASCADE
+    eq_id integer REFERENCES _equipment(eq_id) ON DELETE CASCADE,
+    eq_handout boolean DEFAULT true
 );
 ALTER TABLE _event_equipment_connection ADD CONSTRAINT
 PK_event_equipment_connection PRIMARY KEY(ev_id,eq_id);

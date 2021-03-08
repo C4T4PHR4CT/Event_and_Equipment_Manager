@@ -20,8 +20,13 @@ namespace EventManagerBackend
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
-            services.AddSingleton<IPersistence, Persistence>();
-            services.AddSwaggerGen(c => { c.SwaggerDoc("v1", new OpenApiInfo {Title = "AuthorAPI", Version = "v1"}); });
+            ConfigService configService = new ConfigService();
+            PersistenceService persistenceService = new PersistenceService(configService);
+            if (configService.CheckIntegrityOnStartup)
+                persistenceService.CheckIntegrity();
+            services.AddSingleton<IConfigService, ConfigService>(init => configService);
+            services.AddSingleton<IPersistenceService, PersistenceService>(init => persistenceService);
+            services.AddSwaggerGen(c => { c.SwaggerDoc("v1", new OpenApiInfo {Title = "Event and Equipment Manager API", Version = "v1"}); });
         }
         
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

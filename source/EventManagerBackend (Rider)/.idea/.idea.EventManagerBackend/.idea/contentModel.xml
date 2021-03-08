@@ -8,18 +8,27 @@
         <e p="appsettings.Development.json" t="Include" />
         <e p="appsettings.json" t="Include" />
         <e p="bin" t="ExcludeRecursive" />
+        <e p="config.json" t="Include" />
         <e p="Controllers" t="Include">
-          <e p="AuthorController.cs" t="Include" />
-          <e p="BookController.cs" t="Include" />
+          <e p="EquipmentController.cs" t="Include" />
+          <e p="EventController.cs" t="Include" />
         </e>
         <e p="Data" t="Include">
-          <e p="IPersistence.cs" t="Include" />
-          <e p="Persistence.cs" t="Include" />
+          <e p="ConfigService.cs" t="Include" />
+          <e p="IConfigService.cs" t="Include" />
+          <e p="IPersistenceService.cs" t="Include" />
+          <e p="PersistenceService.cs" t="Include" />
         </e>
         <e p="EventManagerBackend.csproj" t="IncludeRecursive" />
         <e p="Model" t="Include">
-          <e p="Author.cs" t="Include" />
-          <e p="Book.cs" t="Include" />
+          <e p="Equipment.cs" t="Include" />
+          <e p="Event.cs" t="Include" />
+          <e p="Exception" t="Include">
+            <e p="ConflictException.cs" t="Include" />
+            <e p="NotFoundException.cs" t="Include" />
+            <e p="UnauthorizedException.cs" t="Include" />
+          </e>
+          <e p="User.cs" t="Include" />
         </e>
         <e p="obj" t="ExcludeRecursive">
           <e p="Debug" t="Include">

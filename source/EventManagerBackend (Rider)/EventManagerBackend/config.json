@@ -1,0 +1,11 @@
+{
+  "Port": 42069,
+  "DbHost": "localhost",
+  "DbPort": 5432,
+  "DbName": "postgres",
+  "DbUser": "postgres",
+  "DbPassword": "postgres",
+  "DbSchema": "event_and_equipment_manager",
+  "Secret": "mysecret",
+  "CheckIntegrityOnStartup": false
+}
