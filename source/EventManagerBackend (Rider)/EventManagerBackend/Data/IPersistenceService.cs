@@ -4,8 +4,8 @@ namespace EventManagerBackend.Data
 {
     public interface IPersistenceService
     {
-        public bool CheckUserPassword(int userId, string password);
-        public User GetUser(int userId);
+        public bool CheckUserPassword(string user, string password);
+        public User GetUser(string user);
         public int GetEventOrgId(int eventId);
         public int GetEquipmentOrgId(int equipmentId);
         public Event[] GetEvents(int? equipmentId, long? from, long? until, int? organization);

@@ -14,7 +14,7 @@ CREATE TABLE _organization (
 
 CREATE TABLE _user (
 	us_id serial PRIMARY KEY,
-    us_name varchar(32) NOT NULL,
+    us_name varchar(32) NOT NULL UNIQUE,
     us_password varchar(32) NOT NULL,
     us_permission integer REFERENCES _permission(pe_id) ON DELETE CASCADE NOT NULL,
     us_organization integer REFERENCES _organization(og_id) ON DELETE CASCADE
@@ -42,8 +42,8 @@ CREATE TRIGGER _event_default_end
 CREATE TABLE _equipment (
     eq_id serial PRIMARY KEY,
     eq_name varchar(512) NOT NULL,
-    eq_category varchar(32),
-    eq_note varchar(512),
+    eq_category varchar(32) DEFAULT '',
+    eq_note varchar(512) DEFAULT '',
     eq_organization integer REFERENCES _organization(og_id) ON DELETE CASCADE NOT NULL
 );
 

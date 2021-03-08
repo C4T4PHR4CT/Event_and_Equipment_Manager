@@ -1,10 +1,13 @@
+using System.Collections.Generic;
 using EventManagerBackend.Data;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
+using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace EventManagerBackend
 {
@@ -26,7 +29,41 @@ namespace EventManagerBackend
                 persistenceService.CheckIntegrity();
             services.AddSingleton<IConfigService, ConfigService>(init => configService);
             services.AddSingleton<IPersistenceService, PersistenceService>(init => persistenceService);
-            services.AddSwaggerGen(c => { c.SwaggerDoc("v1", new OpenApiInfo {Title = "Event and Equipment Manager API", Version = "v1"}); });
+            services.AddSwaggerGen(c => {
+                c.SwaggerDoc("v1", new OpenApiInfo {Title = "Event and Equipment Manager API", Version = "v1"});
+                // add JWT Authentication
+                var securityScheme = new OpenApiSecurityScheme
+                {
+                    Name = "Bearer Authentication",
+                    In = ParameterLocation.Header,
+                    Type = SecuritySchemeType.Http,
+                    Scheme = "bearer",
+                    BearerFormat = "JWT",
+                    Reference = new OpenApiReference {
+                        Id = JwtBearerDefaults.AuthenticationScheme,
+                        Type = ReferenceType.SecurityScheme
+                    }
+                };
+                c.AddSecurityDefinition(securityScheme.Reference.Id, securityScheme);
+                c.AddSecurityRequirement(new OpenApiSecurityRequirement {
+                    {securityScheme, new string[] { }}
+                });
+                // add Basic Authentication
+                var basicSecurityScheme = new OpenApiSecurityScheme {
+                    Type = SecuritySchemeType.Http,
+                    Scheme = "basic",
+                    Reference = new OpenApiReference {
+                        Id = "BasicAuth",
+                        Type = ReferenceType.SecurityScheme
+                    }
+                };
+                c.AddSecurityDefinition(basicSecurityScheme.Reference.Id, basicSecurityScheme);
+                c.AddSecurityRequirement(new OpenApiSecurityRequirement
+                {
+                    {basicSecurityScheme, new string[] { }}
+                });
+                /*c.OperationFilter<AddRequiredHeaderParameter>();*/
+            });
         }
         
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -45,6 +82,21 @@ namespace EventManagerBackend
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
+        }
+    }
+    
+    public class AddRequiredHeaderParameter : IOperationFilter
+    {
+        public void Apply(OpenApiOperation operation, OperationFilterContext context)
+        {
+            if (operation.Parameters == null)
+                operation.Parameters = new List<OpenApiParameter>();
+            operation.Parameters.Add(new OpenApiParameter
+            {
+                Name = "Authorization",
+                In = ParameterLocation.Header,
+                Required = false
+            });
         }
     }
 }

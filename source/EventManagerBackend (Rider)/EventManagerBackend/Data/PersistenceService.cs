@@ -15,7 +15,7 @@ namespace EventManagerBackend.Data
             _config = config;
         }
 
-        public bool CheckUserPassword(int userId, string password)
+        public bool CheckUserPassword(string user, string password)
         {
             using (var connection = new NpgsqlConnection("User ID=" + _config.DbUser + ";Password=" + _config.DbPassword + ";Host=" + _config.DbHost + ";Database=" + _config.DbName + ";Port=" + _config.DbPort))
             {
@@ -23,16 +23,16 @@ namespace EventManagerBackend.Data
                 var command = connection.CreateCommand();
                 command.CommandText = "SET search_path TO " + _config.DbSchema;
                 command.ExecuteNonQuery();
-                command.CommandText = "SELECT us_password FROM _user WHERE us_id = @id";
-                command.Parameters.AddWithValue("@id", userId);
+                command.CommandText = "SELECT us_password FROM _user WHERE us_name = @name";
+                command.Parameters.AddWithValue("@name", user);
                 var reader = command.ExecuteReader();
                 if (reader.Read())
                     return reader.GetString(0) == password;
             }
-            throw new NotFoundException("User " + userId + " (id) not found!");
+            return false;
         }
 
-        public User GetUser(int userId)
+        public User GetUser(string user)
         {
             using (var connection = new NpgsqlConnection("User ID=" + _config.DbUser + ";Password=" + _config.DbPassword + ";Host=" + _config.DbHost + ";Database=" + _config.DbName + ";Port=" + _config.DbPort))
             {
@@ -40,21 +40,26 @@ namespace EventManagerBackend.Data
                 var command = connection.CreateCommand();
                 command.CommandText = "SET search_path TO " + _config.DbSchema;
                 command.ExecuteNonQuery();
-                command.CommandText = "SELECT _user.us_id, _user.us_name, _user.us_permission, _permission.pe_name, _user.us_organization, _organization.og_name FROM _user LEFT JOIN _permission ON (_user.us_permission = _permission.pe_id) LEFT JOIN _organization ON (_user.us_organization = _organization.og_id) WHERE _user.us_id = @id";
-                command.Parameters.AddWithValue("@id", userId);
+                command.CommandText = "SELECT _user.us_id, _user.us_name, _user.us_permission, _permission.pe_name, _user.us_organization, _organization.og_name FROM _user LEFT JOIN _permission ON (_user.us_permission = _permission.pe_id) LEFT JOIN _organization ON (_user.us_organization = _organization.og_id) WHERE _user.us_name = @name";
+                command.Parameters.AddWithValue("@name", user);
                 var reader = command.ExecuteReader();
                 if (reader.Read())
-                    return new User
+                {
+                    User temp = new User
                     {
                         Id = reader.GetInt32(0),
                         Name = reader.GetString(1),
                         PermissionLevel = reader.GetInt32(2),
-                        Permission = reader.GetString(3),
-                        OrganizationId = reader.GetInt32(4),
-                        Organization = reader.GetString(5)
+                        Permission = reader.GetString(3)
                     };
+                    try {
+                        temp.OrganizationId = reader.GetInt32(4);
+                        temp.Organization = reader.GetString(5);
+                    } catch (InvalidCastException) {}
+                    return temp;
+                }
             }
-            throw new NotFoundException("User " + userId + " (id) not found!");
+            throw new NotFoundException("User \"" + user + "\" (id) not found!");
         }
 
         public int GetEventOrgId(int eventId)
