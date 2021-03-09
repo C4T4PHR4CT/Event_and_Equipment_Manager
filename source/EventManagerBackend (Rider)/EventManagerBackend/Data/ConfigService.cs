@@ -125,7 +125,6 @@ namespace EventManagerBackend.Data
             }
         }
         private static string _secret;
-
         public bool CheckIntegrityOnStartup
         {
             get {
@@ -141,6 +140,21 @@ namespace EventManagerBackend.Data
             }
         }
         private static bool? _checkIntegrityOnStartup;
+        public int TokenExpire
+        {
+            get {
+                if (!_initialized)
+                    Initialize();
+                return _tokenExpire;
+            }
+            set {
+                if (!_initialized)
+                    Initialize();
+                _tokenExpire = value;
+                SaveConfig();
+            }
+        }
+        private static int _tokenExpire;
 
         private static bool _initialized = false;
 

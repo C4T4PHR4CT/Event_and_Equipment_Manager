@@ -11,5 +11,6 @@
         public string DbSchema { get; set; }
         public string Secret { get; set; }
         public bool CheckIntegrityOnStartup { get; set; }
+        public int TokenExpire { get; set; }
     }
 }

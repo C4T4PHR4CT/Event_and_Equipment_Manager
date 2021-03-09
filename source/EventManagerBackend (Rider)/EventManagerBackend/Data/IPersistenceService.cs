@@ -6,6 +6,7 @@ namespace EventManagerBackend.Data
     {
         public bool CheckUserPassword(string user, string password);
         public User GetUser(string user);
+        public User GetUserById(int userId);
         public int GetEventOrgId(int eventId);
         public int GetEquipmentOrgId(int equipmentId);
         public Event[] GetEvents(int? equipmentId, long? from, long? until, int? organization);

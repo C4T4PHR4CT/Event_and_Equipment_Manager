@@ -23,9 +23,12 @@ namespace EventManagerBackend.Controllers
         {
             try
             {
-                Equipment[] temp = _persistence.GetEquipments(eventId, null);
-                /*foreach (Equipment eq in temp)
-                    eq.Events = _persistence.GetEvents(eq.Id, null, null, null);*/
+                if (HttpContext.Items["User"] == null)
+                    throw new UnauthorizedException("Authorization failed!");
+                User user = (User) HttpContext.Items["User"];
+                if (user.PermissionLevel < 2)
+                    throw new UnauthorizedException("You don't have high enough clearance for this operation!");
+                Equipment[] temp = _persistence.GetEquipments(eventId, user.OrganizationId);
                 return StatusCode(200, temp);
             }
             catch (NotFoundException e)
@@ -52,7 +55,12 @@ namespace EventManagerBackend.Controllers
         {
             try
             {
-                int eqId = _persistence.AddEquipment(equipment, 1);
+                if (HttpContext.Items["User"] == null)
+                    throw new UnauthorizedException("Authorization failed!");
+                User user = (User) HttpContext.Items["User"];
+                if (user.PermissionLevel < 3)
+                    throw new UnauthorizedException("You don't have high enough clearance for this operation!");
+                int eqId = _persistence.AddEquipment(equipment, (int) user.OrganizationId);
                 if (equipment.Events == null) return StatusCode(200);
                 string error = "";
                 foreach (Event ev in equipment.Events)
@@ -95,6 +103,13 @@ namespace EventManagerBackend.Controllers
         {
             try
             {
+                if (HttpContext.Items["User"] == null)
+                    throw new UnauthorizedException("Authorization failed!");
+                User user = (User) HttpContext.Items["User"];
+                if (user.PermissionLevel < 2)
+                    throw new UnauthorizedException("You don't have high enough clearance for this operation!");
+                if (_persistence.GetEquipmentOrgId(equipmentId) != user.OrganizationId && user.OrganizationId != null)
+                    throw new UnauthorizedException("The requested Equipment is owned by a different organization!");
                 Equipment temp = _persistence.GetEquipment(equipmentId);
                 temp.Events = _persistence.GetEvents(equipmentId, null, null, null);
                 return StatusCode(200, temp);
@@ -123,6 +138,13 @@ namespace EventManagerBackend.Controllers
         {
             try
             {
+                if (HttpContext.Items["User"] == null)
+                    throw new UnauthorizedException("Authorization failed!");
+                User user = (User) HttpContext.Items["User"];
+                if (user.PermissionLevel < 3)
+                    throw new UnauthorizedException("You don't have high enough clearance for this operation!");
+                if (_persistence.GetEquipmentOrgId(equipmentId) != user.OrganizationId && user.OrganizationId != null)
+                    throw new UnauthorizedException("The requested Equipment is owned by a different organization!");
                 _persistence.DeleteEquipment(equipmentId);
                 return StatusCode(200);
             }
@@ -150,6 +172,13 @@ namespace EventManagerBackend.Controllers
         {
             try
             {
+                if (HttpContext.Items["User"] == null)
+                    throw new UnauthorizedException("Authorization failed!");
+                User user = (User) HttpContext.Items["User"];
+                if (user.PermissionLevel < 3)
+                    throw new UnauthorizedException("You don't have high enough clearance for this operation!");
+                if (_persistence.GetEquipmentOrgId(equipmentId) != user.OrganizationId && user.OrganizationId != null)
+                    throw new UnauthorizedException("The requested Equipment is owned by a different organization!");
                 equipment.Id = equipmentId;
                 _persistence.UpdateEquipment(equipment);
                 if (equipment.Events == null) return StatusCode(200);
@@ -167,7 +196,8 @@ namespace EventManagerBackend.Controllers
                     if (contains) continue;
                     try
                     {
-                        _persistence.AddEquipmentEventConnection(equipmentId, (int) newEv.Id);
+                        if (newEv.Id != null)
+                            _persistence.AddEquipmentEventConnection(equipmentId, (int) newEv.Id);
                     }
                     catch (ConflictException e)
                     {

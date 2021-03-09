@@ -6,6 +6,7 @@
   "DbUser": "postgres",
   "DbPassword": "postgres",
   "DbSchema": "event_and_equipment_manager",
-  "Secret": "mysecret",
-  "CheckIntegrityOnStartup": false
+  "Secret": "megszentsegtelenithetetlensegeskedeseitekert",
+  "CheckIntegrityOnStartup": false,
+  "TokenExpire": 60
 }

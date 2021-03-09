@@ -62,6 +62,36 @@ namespace EventManagerBackend.Data
             throw new NotFoundException("User \"" + user + "\" (id) not found!");
         }
 
+        public User GetUserById(int userId)
+        {
+            using (var connection = new NpgsqlConnection("User ID=" + _config.DbUser + ";Password=" + _config.DbPassword + ";Host=" + _config.DbHost + ";Database=" + _config.DbName + ";Port=" + _config.DbPort))
+            {
+                connection.Open();
+                var command = connection.CreateCommand();
+                command.CommandText = "SET search_path TO " + _config.DbSchema;
+                command.ExecuteNonQuery();
+                command.CommandText = "SELECT _user.us_id, _user.us_name, _user.us_permission, _permission.pe_name, _user.us_organization, _organization.og_name FROM _user LEFT JOIN _permission ON (_user.us_permission = _permission.pe_id) LEFT JOIN _organization ON (_user.us_organization = _organization.og_id) WHERE _user.us_id = @id";
+                command.Parameters.AddWithValue("@id", userId);
+                var reader = command.ExecuteReader();
+                if (reader.Read())
+                {
+                    User temp = new User
+                    {
+                        Id = reader.GetInt32(0),
+                        Name = reader.GetString(1),
+                        PermissionLevel = reader.GetInt32(2),
+                        Permission = reader.GetString(3)
+                    };
+                    try {
+                        temp.OrganizationId = reader.GetInt32(4);
+                        temp.Organization = reader.GetString(5);
+                    } catch (InvalidCastException) {}
+                    return temp;
+                }
+            }
+            throw new NotFoundException("User \"" + userId + "\" (id) not found!");
+        }
+
         public int GetEventOrgId(int eventId)
         {
             using (var connection = new NpgsqlConnection("User ID=" + _config.DbUser + ";Password=" + _config.DbPassword + ";Host=" + _config.DbHost + ";Database=" + _config.DbName + ";Port=" + _config.DbPort))
@@ -384,6 +414,7 @@ namespace EventManagerBackend.Data
                 command.CommandText = "SET search_path TO " + _config.DbSchema;
                 command.ExecuteNonQuery();
                 
+                string error = "";
                 Event[] events = GetEvents(equipmentId, null, null, null);
                 Event newEv = GetEvent(eventId);
                 command.CommandText = "SELECT eq_name FROM _equipment WHERE eq_id = @id";
@@ -392,7 +423,8 @@ namespace EventManagerBackend.Data
                 string eqName = "";
                 if (reader.Read())
                     eqName = reader.GetString(0);
-                string error = "";
+                if (GetEquipmentOrgId(equipmentId) != GetEventOrgId(eventId))
+                    error += "Event " + newEv.Id + " (id) \"" + newEv.Name + "\" is not owned by the same organization, as Equipment " + equipmentId + " (id) \"" + eqName + "\"\n";
                 foreach (Event ev in events)
                     if (ev.Start < newEv.Start && ev.End > newEv.Start || ev.Start < newEv.End && ev.End > newEv.End || newEv.Start < ev.Start && newEv.End > ev.Start)
                         error += "Event " + ev.Id + " (id) \"" + ev.Name + "\" conflicts with Event " + newEv.Id + " (id) \"" + newEv.Name + "\" on Equipment " + equipmentId + " (id) \"" + eqName + "\"\n";
