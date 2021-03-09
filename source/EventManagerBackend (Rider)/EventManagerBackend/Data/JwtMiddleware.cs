@@ -23,10 +23,11 @@ namespace EventManagerBackend.Data
 
         public async Task Invoke(HttpContext context)
         {
-            foreach (string token in context.Request.Headers["Authorization"])
+            var temp = context.Request.Headers["Authorization"];
+            foreach (string token in temp)
                 if (AttachBasic(context, token))
                     break;
-            foreach (string token in context.Request.Headers["Authorization"])
+            foreach (string token in temp)
                 if (AttachBearer(context, token))
                     break;
             await _next(context);
