@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">Event &amp; Equipment Manager</string>
+    <string name="login_username">username</string>
+    <string name="login_password">password</string>
+    <string name="login_remember">remember me</string>
+    <string name="login_cache">cache on startup</string>
+    <string name="login_button">Login</string>
 </resources>
