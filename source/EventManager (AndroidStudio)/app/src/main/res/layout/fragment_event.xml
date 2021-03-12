@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".EventFragment">
+    tools:context=".view.EventFragment">
 
     <TextView
         android:layout_width="match_parent"
@@ -55,8 +55,26 @@
 
     </LinearLayout>
 
-    <androidx.recyclerview.widget.RecyclerView
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent">
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/event_add"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|end"
+            android:layout_margin="20dp"
+            android:clickable="true"
+            android:contentDescription="@string/event_add_event"
+            android:src="@android:drawable/ic_input_add" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/event_list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+        </androidx.recyclerview.widget.RecyclerView>
+    </FrameLayout>
 
 </LinearLayout>

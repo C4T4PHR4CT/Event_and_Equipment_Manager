@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ProfileFragment"
+    tools:context=".view.ProfileFragment"
     android:orientation="vertical">
 
 
@@ -46,16 +46,35 @@
             android:layout_height="wrap_content" />
     </LinearLayout>
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="10dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="5dp"
+            tools:ignore="RtlHardcoded"
+            android:text="@string/profile_organization" />
+
+        <TextView
+            android:id="@+id/profile_organization"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+
+    <CheckBox
+        android:id="@+id/profile_keep"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/login_keep"/>
+
     <CheckBox
         android:id="@+id/profile_remember"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/login_remember"/>
-
-    <CheckBox
-        android:id="@+id/profile_cache"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/local_caching"/>
 
 </LinearLayout>

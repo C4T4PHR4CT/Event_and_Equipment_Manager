@@ -1,4 +1,4 @@
-package com.SovietHouseholdAppliances.EventManager;
+package com.SovietHouseholdAppliances.EventManager.view;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.GravityCompat;
@@ -7,6 +7,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentContainerView;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.lifecycle.ViewModelProvider;
 
 import android.content.Context;
 import android.content.Intent;
@@ -15,7 +16,14 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
+import com.SovietHouseholdAppliances.EventManager.R;
+import com.SovietHouseholdAppliances.EventManager.viewmodel.MainViewModel;
+
 public class MainActivity extends AppCompatActivity {
+
+    public static Context mainActivity;
+
+    MainViewModel viewModel;
 
     ImageButton menu;
     DrawerLayout drawer;
@@ -25,12 +33,23 @@ public class MainActivity extends AppCompatActivity {
     Button logout;
     FragmentContainerView fragment;
 
-    Fragment activeFragment;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        mainActivity = getApplicationContext();
+
+        viewModel = new ViewModelProvider(this).get(MainViewModel.class);
+        viewModel.getActiveFragment().observe(this, newFragment -> {
+            try {
+                Fragment temp = newFragment.newInstance();
+                FragmentManager fragmentManager = getSupportFragmentManager();
+                FragmentTransaction transaction = fragmentManager.beginTransaction();
+                transaction.replace(fragment.getId(), temp);
+                transaction.commit();
+            } catch (IllegalAccessException|InstantiationException ignored) {}
+        });
 
         menu = findViewById(R.id.menu_button);
         drawer = findViewById(R.id.menu_drawer);
@@ -46,28 +65,29 @@ public class MainActivity extends AppCompatActivity {
 
         profile.setOnClickListener(e -> {
             closeDrawer();
-            navigate(new ProfileFragment());
+            viewModel.refreshUser();
+            viewModel.setActiveFragment(ProfileFragment.class);
         });
 
         events.setOnClickListener(e -> {
             closeDrawer();
-            navigate(new EventFragment());
+            viewModel.setActiveFragment(EventFragment.class);
         });
 
         equipments.setOnClickListener(e -> {
             closeDrawer();
-            navigate(new EquipmentFragment());
+            viewModel.setActiveFragment(EquipmentFragment.class);
         });
 
         logout.setOnClickListener(e -> {
             closeDrawer();
-            startActivityForResult(new Intent(this, LoginActivity.class), 1);
+            Intent temp = new Intent(this, LoginActivity.class);
+            temp.putExtra("auth", true);
+            startActivityForResult(temp, 1);
         });
 
         if (savedInstanceState == null)
-            navigate(new MainFragment());
-
-        maininstance = getApplicationContext();
+            viewModel.setActiveFragment(MainFragment.class);
     }
 
     @Override
@@ -80,19 +100,19 @@ public class MainActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        //returning from login
+        //returning from auth
         if (requestCode == 1) {
-            navigate(new MainFragment());
+            viewModel.setActiveFragment(MainFragment.class);
         }
     }
 
     @Override
     public void onBackPressed () {
         if (!drawer.isDrawerOpen(GravityCompat.START))
-            if (activeFragment instanceof MainFragment)
+            if (viewModel.getActiveFragment().getValue() == MainFragment.class)
                 finish();
             else
-                navigate(new MainFragment());
+                viewModel.setActiveFragment(MainFragment.class);
         else
             closeDrawer();
     }
@@ -107,20 +127,8 @@ public class MainActivity extends AppCompatActivity {
         drawer.openDrawer(GravityCompat.START);
     }
 
-    private void navigate(Fragment newFragment)
-    {
-        if (activeFragment == null || newFragment.getClass() != activeFragment.getClass()) {
-            activeFragment = newFragment;
-            FragmentManager fragmentManager = getSupportFragmentManager();
-            FragmentTransaction transaction = fragmentManager.beginTransaction();
-            transaction.replace(fragment.getId(), newFragment);
-            transaction.commit();
-        }
-    }
-
-    private static Context maininstance;
     public static void print(String content)
     {
-        Toast.makeText(maininstance, content, Toast.LENGTH_SHORT).show();
+        Toast.makeText(mainActivity, content, Toast.LENGTH_SHORT).show();
     }
 }
