@@ -1,5 +1,5 @@
 {
-  "Port": 42069,
+  "Port": 5000,
   "DbHost": "localhost",
   "DbPort": 5432,
   "DbName": "postgres",

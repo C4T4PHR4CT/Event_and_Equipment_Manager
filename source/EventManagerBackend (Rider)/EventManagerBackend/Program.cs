@@ -10,7 +10,7 @@ namespace EventManagerBackend
         {
             int port = new ConfigService().Port;
             string[] ports = {"http://*:" + port, "https://*:" + (port + 1)};
-            IHostBuilder hostBuilder = Host.CreateDefaultBuilder(args).ConfigureWebHostDefaults(webBuilder => { webBuilder.UseStartup<Startup>()/*.UseUrls(ports)*/; });
+            IHostBuilder hostBuilder = Host.CreateDefaultBuilder(args).ConfigureWebHostDefaults(webBuilder => { webBuilder.UseStartup<Startup>().UseUrls(ports); });
             hostBuilder.Build().Run();
         }
     }
