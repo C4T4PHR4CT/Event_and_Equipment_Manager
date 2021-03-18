@@ -25,7 +25,7 @@ public class Preferences {
         SharedPreferences.Editor editor = preferences.edit();
         editor.putBoolean("keepLoggedIn", keepLoggedIn);
         if (!keepLoggedIn) {
-            setToken("");
+            //setToken("");
             setRememberCredentials(false);
         }
         editor.apply();
@@ -36,7 +36,7 @@ public class Preferences {
     }
 
     public void setToken(String token) {
-        if (!getKeepLoggedIn()) return;
+        //if (!getKeepLoggedIn()) return;
         SharedPreferences.Editor editor = preferences.edit();
         editor.putString("token", token);
         editor.apply();

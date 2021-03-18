@@ -41,6 +41,7 @@ public class MainActivity extends AppCompatActivity {
         mainActivity = getApplicationContext();
 
         viewModel = new ViewModelProvider(this).get(MainViewModel.class);
+
         viewModel.getActiveFragment().observe(this, newFragment -> {
             try {
                 Fragment temp = newFragment.newInstance();
@@ -49,6 +50,11 @@ public class MainActivity extends AppCompatActivity {
                 transaction.replace(fragment.getId(), temp);
                 transaction.commit();
             } catch (IllegalAccessException|InstantiationException ignored) {}
+        });
+
+        viewModel.getAlert().observe(this, alert -> {
+            if (alert.equals("logout"))
+                logout();
         });
 
         menu = findViewById(R.id.menu_button);
@@ -65,7 +71,6 @@ public class MainActivity extends AppCompatActivity {
 
         profile.setOnClickListener(e -> {
             closeDrawer();
-            viewModel.refreshUser();
             viewModel.setActiveFragment(ProfileFragment.class);
         });
 
@@ -80,10 +85,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         logout.setOnClickListener(e -> {
-            closeDrawer();
-            Intent temp = new Intent(this, LoginActivity.class);
-            temp.putExtra("auth", true);
-            startActivityForResult(temp, 1);
+            logout();
         });
 
         if (savedInstanceState == null)
@@ -109,9 +111,11 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onBackPressed () {
         if (!drawer.isDrawerOpen(GravityCompat.START))
-            if (viewModel.getActiveFragment().getValue() == MainFragment.class)
+            if (viewModel.getActiveFragment().getValue() == MainFragment.class) {
+                if (!viewModel.getKeepLoggedIn())
+                    viewModel.clearToken();
                 finish();
-            else
+            } else
                 viewModel.setActiveFragment(MainFragment.class);
         else
             closeDrawer();
@@ -125,6 +129,14 @@ public class MainActivity extends AppCompatActivity {
     private void openDrawer()
     {
         drawer.openDrawer(GravityCompat.START);
+    }
+
+    private void logout()
+    {
+        closeDrawer();
+        viewModel.clearToken();
+        Intent temp = new Intent(this, LoginActivity.class);
+        startActivityForResult(temp, 1);
     }
 
     public static void print(String content)

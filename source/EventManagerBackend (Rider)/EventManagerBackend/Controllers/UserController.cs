@@ -58,9 +58,13 @@ namespace EventManagerBackend.Controllers
             {
                 if (HttpContext.Items["User"] == null)
                     throw new UnauthorizedException("Authorization failed!");
-                if (((User)HttpContext.Items["User"]).PermissionLevel < 4)
+                if (user != "@" && ((User)HttpContext.Items["User"]).PermissionLevel < 4 && ((User)HttpContext.Items["User"]).OrganizationId != _persistence.GetUser(user).OrganizationId)
                     throw new UnauthorizedException("You don't have high enough clearance for this operation!");
-                User temp = _persistence.GetUser(user);
+                User temp;
+                if (user == "@")
+                    temp = (User) HttpContext.Items["User"];
+                else
+                    temp = _persistence.GetUser(user);
                 return StatusCode(200, temp);
             }
             catch (NotFoundException e)

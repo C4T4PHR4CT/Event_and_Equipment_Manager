@@ -41,6 +41,8 @@ public class ProfileFragment extends Fragment {
         keep = activity.findViewById(R.id.profile_keep);
         remember = activity.findViewById(R.id.profile_remember);
 
+        activity.viewModel.refreshUser();
+
         username.setText(activity.viewModel.getUser().getValue().name);
         type.setText(activity.viewModel.getUser().getValue().permission);
         organization.setText(activity.viewModel.getUser().getValue().organization);
