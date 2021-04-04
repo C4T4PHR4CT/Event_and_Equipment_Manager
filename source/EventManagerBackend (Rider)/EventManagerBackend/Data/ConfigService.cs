@@ -145,7 +145,7 @@ namespace EventManagerBackend.Data
             get {
                 if (!_initialized)
                     Initialize();
-                return _tokenExpire;
+                return _tokenExpire ?? 0;
             }
             set {
                 if (!_initialized)
@@ -154,7 +154,7 @@ namespace EventManagerBackend.Data
                 SaveConfig();
             }
         }
-        private static int _tokenExpire;
+        private static int? _tokenExpire;
 
         private static bool _initialized = false;
 

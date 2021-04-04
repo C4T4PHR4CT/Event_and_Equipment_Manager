@@ -92,9 +92,10 @@ namespace EventManagerBackend.Controllers
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(new[] { new Claim("id", userId.ToString()) }),
-                Expires = DateTime.UtcNow.Add(new TimeSpan(0, _config.TokenExpire, 0)),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
             };
+            if (_config.TokenExpire > 0)
+                tokenDescriptor.Expires = DateTime.UtcNow.Add(new TimeSpan(0, _config.TokenExpire, 0));
             var token = tokenHandler.CreateToken(tokenDescriptor);
             return tokenHandler.WriteToken(token);
         }

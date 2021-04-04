@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using EventManagerBackend.Data;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
@@ -7,7 +6,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
-using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace EventManagerBackend
 {
@@ -24,11 +22,11 @@ namespace EventManagerBackend
         {
             services.AddControllers();
             ConfigService configService = new ConfigService();
-            PersistenceService persistenceService = new PersistenceService(configService);
+            PersistenceServiceMs persistenceService = new PersistenceServiceMs(configService);
             if (configService.CheckIntegrityOnStartup)
                 persistenceService.CheckIntegrity();
             services.AddSingleton<IConfigService, ConfigService>(init => configService);
-            services.AddSingleton<IPersistenceService, PersistenceService>(init => persistenceService);
+            services.AddSingleton<IPersistenceService, PersistenceServiceMs>(init => persistenceService);
             services.AddSwaggerGen(c => {
                 c.SwaggerDoc("v1", new OpenApiInfo {Title = "Event and Equipment Manager API", Version = "v1"});
                 // add JWT Authentication

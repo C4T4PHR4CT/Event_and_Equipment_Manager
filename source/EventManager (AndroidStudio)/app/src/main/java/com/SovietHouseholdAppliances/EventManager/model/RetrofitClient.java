@@ -15,7 +15,7 @@ import retrofit2.converter.scalars.ScalarsConverterFactory;
 public class RetrofitClient {
 
     private static RetrofitClient instance;
-    private static final String baseURL = "https://192.168.29.181:42001";
+    private static final String baseURL = "https://192.168.29.181:42002";
 
     private final EventManagerApi eventManagerApi;
 

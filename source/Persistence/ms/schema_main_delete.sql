@@ -1,29 +1,28 @@
 USE EventManager
 GO
 
-IF OBJECT_ID('main._event_equipment_connection') IS NOT NULL
-	TRUNCATE TABLE main._event_equipment_connection
-IF OBJECT_ID('main._event_equipment_connection') IS NOT NULL
-	DROP TABLE main._event_equipment_connection
-IF OBJECT_ID('main._equipment') IS NOT NULL
-	TRUNCATE TABLE main._equipment
-IF OBJECT_ID('main._equipment') IS NOT NULL
-	DROP TABLE main._equipment
-IF OBJECT_ID('main._event') IS NOT NULL
-	TRUNCATE TABLE main._event
-IF OBJECT_ID('main._event') IS NOT NULL
-	DROP TABLE main._event
-IF OBJECT_ID('main._user') IS NOT NULL
-	TRUNCATE TABLE main._user
-IF OBJECT_ID('main._user') IS NOT NULL
-	DROP TABLE main._user
-IF OBJECT_ID('main._organization') IS NOT NULL
-	TRUNCATE TABLE main._organization
-IF OBJECT_ID('main._organization') IS NOT NULL
-	DROP TABLE main._organization
-IF OBJECT_ID('main._permission') IS NOT NULL
-	TRUNCATE TABLE main._permission
-IF OBJECT_ID('main._permission') IS NOT NULL
-	DROP TABLE main._permission
-DROP SCHEMA [main]
+IF OBJECT_ID('dbo._event_equipment_connection') IS NOT NULL
+	TRUNCATE TABLE dbo._event_equipment_connection
+IF OBJECT_ID('dbo._event_equipment_connection') IS NOT NULL
+	DROP TABLE dbo._event_equipment_connection
+IF OBJECT_ID('dbo._equipment') IS NOT NULL
+	TRUNCATE TABLE dbo._equipment
+IF OBJECT_ID('dbo._equipment') IS NOT NULL
+	DROP TABLE dbo._equipment
+IF OBJECT_ID('dbo._event') IS NOT NULL
+	TRUNCATE TABLE dbo._event
+IF OBJECT_ID('dbo._event') IS NOT NULL
+	DROP TABLE dbo._event
+IF OBJECT_ID('dbo._user') IS NOT NULL
+	TRUNCATE TABLE dbo._user
+IF OBJECT_ID('dbo._user') IS NOT NULL
+	DROP TABLE dbo._user
+IF OBJECT_ID('dbo._organization') IS NOT NULL
+	TRUNCATE TABLE dbo._organization
+IF OBJECT_ID('dbo._organization') IS NOT NULL
+	DROP TABLE dbo._organization
+IF OBJECT_ID('dbo._permission') IS NOT NULL
+	TRUNCATE TABLE dbo._permission
+IF OBJECT_ID('dbo._permission') IS NOT NULL
+	DROP TABLE dbo._permission
 GO
