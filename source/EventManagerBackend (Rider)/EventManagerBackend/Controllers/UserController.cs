@@ -85,6 +85,13 @@ namespace EventManagerBackend.Controllers
             }
         }
         
+        [HttpGet]
+        [Route("health")]
+        public IActionResult HealthCheck()
+        {
+            return StatusCode(200);
+        }
+        
         private string GenerateJwtToken(int userId)
         {
             var tokenHandler = new JwtSecurityTokenHandler();

@@ -15,7 +15,7 @@ import retrofit2.converter.scalars.ScalarsConverterFactory;
 public class RetrofitClient {
 
     private static RetrofitClient instance;
-    private static final String baseURL = "https://192.168.29.181:42002";
+    private static final String baseURL = "https://eventmanager.nlevi.dev";
 
     private final EventManagerApi eventManagerApi;
 
@@ -24,9 +24,9 @@ public class RetrofitClient {
         retrofitBuilder.addConverterFactory(ScalarsConverterFactory.create());
         retrofitBuilder.addConverterFactory(GsonConverterFactory.create());
         retrofitBuilder.baseUrl(baseURL);
-        OkHttpClient noCert = getUnsafeOkHttpClient();
+        /*OkHttpClient noCert = getUnsafeOkHttpClient();
         if (noCert != null)
-            retrofitBuilder.client(noCert);
+            retrofitBuilder.client(noCert);*/
         Retrofit client = retrofitBuilder.build();
         eventManagerApi = client.create(EventManagerApi.class);
     }

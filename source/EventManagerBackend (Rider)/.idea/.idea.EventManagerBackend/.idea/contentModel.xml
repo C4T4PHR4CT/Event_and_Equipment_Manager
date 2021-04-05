@@ -10,6 +10,7 @@
         <e p="appsettings.json" t="Include" />
         <e p="bin" t="ExcludeRecursive" />
         <e p="config.json" t="Include" />
+        <e p="config_ms.json" t="Include" />
         <e p="config_pg.json" t="Include" />
         <e p="Controllers" t="Include">
           <e p="EquipmentController.cs" t="Include" />
