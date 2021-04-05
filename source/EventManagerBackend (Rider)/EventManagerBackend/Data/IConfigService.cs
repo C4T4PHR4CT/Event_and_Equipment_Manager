@@ -3,6 +3,7 @@
     public interface IConfigService
     {
         public int Port { get; set; }
+        public bool Https { get; set; }
         public string DbHost { get; set; }
         public int DbPort { get; set; }
         public string DbName { get; set; }

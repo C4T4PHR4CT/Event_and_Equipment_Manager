@@ -20,6 +20,21 @@ namespace EventManagerBackend.Data
             }
         }
         private static int? _port;
+        public bool Https
+        {
+            get {
+                if (!_initialized)
+                    Initialize();
+                return _https ?? true;
+            }
+            set {
+                if (!_initialized)
+                    Initialize();
+                _https = value;
+                SaveConfig();
+            }
+        }
+        private static bool? _https;
         public string DbHost
         {
             get { 

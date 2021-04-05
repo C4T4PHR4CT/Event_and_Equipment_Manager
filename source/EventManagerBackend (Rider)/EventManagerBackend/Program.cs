@@ -8,8 +8,13 @@ namespace EventManagerBackend
     {
         public static void Main(string[] args)
         {
-            int port = new ConfigService().Port;
-            string[] ports = {"http://*:" + port, "https://*:" + (port + 1)};
+            var config = new ConfigService();
+            int port = config.Port;
+            string[] ports;
+            if (config.Https)
+                ports = new []{"http://*:" + port, "https://*:" + (port + 1)};
+            else
+                ports = new []{"http://*:" + port};
             IHostBuilder hostBuilder = Host.CreateDefaultBuilder(args).ConfigureWebHostDefaults(webBuilder => { webBuilder.UseStartup<Startup>().UseUrls(ports); });
             hostBuilder.Build().Run();
         }

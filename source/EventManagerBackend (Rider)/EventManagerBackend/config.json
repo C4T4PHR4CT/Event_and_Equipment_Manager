@@ -1,5 +1,6 @@
 {
   "Port": 5000,
+  "Https": true,
   "DbHost": "localhost",
   "DbPort": 5432,
   "DbName": "postgres",
