@@ -103,6 +103,8 @@ namespace EventManagerBackend.Controllers
             };
             if (_config.TokenExpire > 0)
                 tokenDescriptor.Expires = DateTime.UtcNow.Add(new TimeSpan(0, _config.TokenExpire, 0));
+            else
+                tokenDescriptor.Expires = DateTime.Parse("01/01/2030");
             var token = tokenHandler.CreateToken(tokenDescriptor);
             return tokenHandler.WriteToken(token);
         }

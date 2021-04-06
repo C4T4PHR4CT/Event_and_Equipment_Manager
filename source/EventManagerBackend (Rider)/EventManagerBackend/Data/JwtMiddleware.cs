@@ -13,12 +13,14 @@ namespace EventManagerBackend.Data
         private readonly RequestDelegate _next;
         private readonly IPersistenceService _persistence;
         private readonly IConfigService _config;
+        private readonly ILogService _log;
 
-        public JwtMiddleware(RequestDelegate next, IPersistenceService persistence, IConfigService config)
+        public JwtMiddleware(RequestDelegate next, IPersistenceService persistence, IConfigService config, ILogService log)
         {
             _next = next;
             _persistence = persistence;
             _config = config;
+            _log = log;
         }
 
         public async Task Invoke(HttpContext context)
@@ -37,8 +39,10 @@ namespace EventManagerBackend.Data
         {
             try {
                 var temp = token.Split(" ");
+                if (temp[0] == "Basic")
+                    return false;
                 if (temp[0] != "Bearer" || temp.Length != 2)
-                    throw new Exception();
+                    throw new Exception("malformed bearer authorization header");
                 token = temp[1];
                 var tokenHandler = new JwtSecurityTokenHandler();
                 var key = Encoding.ASCII.GetBytes(_config.Secret);
@@ -48,7 +52,7 @@ namespace EventManagerBackend.Data
                     IssuerSigningKey = new SymmetricSecurityKey(key),
                     ValidateIssuer = false,
                     ValidateAudience = false,
-                    ClockSkew = TimeSpan.Zero
+                    ClockSkew = TimeSpan.FromSeconds(30)
                 }, out SecurityToken validatedToken);
 
                 var jwtToken = (JwtSecurityToken) validatedToken;
@@ -56,7 +60,8 @@ namespace EventManagerBackend.Data
 
                 context.Items["User"] = _persistence.GetUserById(userId);
                 return true;
-            } catch {
+            } catch (Exception e) {
+                _log.Log(e.ToString());
                 return false;
             }
         }
@@ -65,17 +70,20 @@ namespace EventManagerBackend.Data
         {
             try {
                 var temp = token.Split(" ");
+                if (temp[0] == "Bearer")
+                    return false;
                 if (temp[0] != "Basic" || temp.Length != 2)
-                    throw new Exception();
+                    throw new Exception("malformed basic authorization header");
                 temp = Encoding.UTF8.GetString(Convert.FromBase64String(temp[1])).Split(":");
                 if (temp.Length != 2)
-                    throw new Exception();
+                    throw new Exception("malformed basic authorization header");
                 if (_persistence.CheckUserPassword(temp[0], temp[1]))
                     context.Items["User"] = _persistence.GetUser(temp[0]);
                 else
-                    throw new Exception();
+                    throw new Exception("invalid basic authorization credentials");
                 return true;
-            } catch {
+            } catch (Exception e) {
+                _log.Log(e.ToString());
                 return false;
             }
         }

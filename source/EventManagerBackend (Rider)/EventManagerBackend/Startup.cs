@@ -27,6 +27,7 @@ namespace EventManagerBackend
                 persistenceService.CheckIntegrity();
             services.AddSingleton<IConfigService, ConfigService>(init => configService);
             services.AddSingleton<IPersistenceService, PersistenceServiceMs>(init => persistenceService);
+            services.AddSingleton<ILogService, LogService>();
             services.AddSwaggerGen(c => {
                 c.SwaggerDoc("v1", new OpenApiInfo {Title = "Event and Equipment Manager API", Version = "v1"});
                 // add JWT Authentication
