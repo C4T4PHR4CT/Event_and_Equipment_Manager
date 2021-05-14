@@ -14,7 +14,7 @@ CREATE TABLE dbo._organization (
 CREATE TABLE dbo._user (
 	us_id int IDENTITY (1, 1) PRIMARY KEY,
     us_name nvarchar(32) NOT NULL UNIQUE,
-    us_password nvarchar(32) NOT NULL,
+    us_password nvarchar(44) NOT NULL,
     us_permission int REFERENCES dbo._permission(pe_id) NOT NULL,
     us_organization int REFERENCES dbo._organization(og_id)
 );
@@ -49,10 +49,10 @@ CREATE TRIGGER dbo._organization_delete_cascade ON dbo._organization
 INSTEAD OF DELETE AS 
 BEGIN
  SET NOCOUNT ON;
- DELETE FROM dbo._user WHERE us_organization IN (SELECT og_id FROM DELETED)
- DELETE FROM dbo._event WHERE ev_organization IN (SELECT og_id FROM DELETED)
- DELETE FROM dbo._equipment WHERE eq_organization IN (SELECT og_id FROM DELETED)
- DELETE FROM dbo._organization WHERE og_id IN (SELECT og_id FROM DELETED)
+ DELETE FROM dbo._user WHERE us_organization IN (SELECT og_id FROM DELETED);
+ DELETE FROM dbo._event WHERE ev_organization IN (SELECT og_id FROM DELETED);
+ DELETE FROM dbo._equipment WHERE eq_organization IN (SELECT og_id FROM DELETED);
+ DELETE FROM dbo._organization WHERE og_id IN (SELECT og_id FROM DELETED);
 END
 GO
 
@@ -60,8 +60,8 @@ CREATE TRIGGER dbo._permission_delete_cascade ON dbo._permission
 INSTEAD OF DELETE AS 
 BEGIN
  SET NOCOUNT ON;
- DELETE FROM dbo._user WHERE us_permission IN (SELECT pe_id FROM DELETED)
- DELETE FROM dbo._permission WHERE pe_id IN (SELECT pe_id FROM DELETED)
+ DELETE FROM dbo._user WHERE us_permission IN (SELECT pe_id FROM DELETED);
+ DELETE FROM dbo._permission WHERE pe_id IN (SELECT pe_id FROM DELETED);
 END
 GO
 
@@ -69,8 +69,8 @@ CREATE TRIGGER dbo._event_delete_cascade ON dbo._event
 INSTEAD OF DELETE AS 
 BEGIN
  SET NOCOUNT ON;
- DELETE FROM dbo._event_equipment_connection WHERE ev_id IN (SELECT ev_id FROM DELETED)
- DELETE FROM dbo._event WHERE ev_id IN (SELECT ev_id FROM DELETED)
+ DELETE FROM dbo._event_equipment_connection WHERE ev_id IN (SELECT ev_id FROM DELETED);
+ DELETE FROM dbo._event WHERE ev_id IN (SELECT ev_id FROM DELETED);
 END
 GO
 
@@ -78,8 +78,8 @@ CREATE TRIGGER dbo._equipment_delete_cascade ON dbo._equipment
 INSTEAD OF DELETE AS 
 BEGIN
  SET NOCOUNT ON;
- DELETE FROM dbo._event_equipment_connection WHERE eq_id IN (SELECT eq_id FROM DELETED)
- DELETE FROM dbo._equipment WHERE eq_id IN (SELECT eq_id FROM DELETED)
+ DELETE FROM dbo._event_equipment_connection WHERE eq_id IN (SELECT eq_id FROM DELETED);
+ DELETE FROM dbo._equipment WHERE eq_id IN (SELECT eq_id FROM DELETED);
 END
 GO
 

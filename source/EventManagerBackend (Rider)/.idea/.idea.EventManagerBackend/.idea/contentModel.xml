@@ -10,6 +10,7 @@
         <e p="appsettings.json" t="Include" />
         <e p="bin" t="ExcludeRecursive" />
         <e p="config.json" t="Include" />
+        <e p="config_live.json" t="Include" />
         <e p="config_ms.json" t="Include" />
         <e p="config_pg.json" t="Include" />
         <e p="Controllers" t="Include">
@@ -34,6 +35,7 @@
           <e p="Event.cs" t="Include" />
           <e p="Exception" t="Include">
             <e p="ConflictException.cs" t="Include" />
+            <e p="ForbiddenException.cs" t="Include" />
             <e p="NotFoundException.cs" t="Include" />
             <e p="UnauthorizedException.cs" t="Include" />
           </e>

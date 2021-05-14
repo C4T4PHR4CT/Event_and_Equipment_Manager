@@ -16,11 +16,6 @@ import com.SovietHouseholdAppliances.EventManager.R;
 
 public class ProfileFragment extends Fragment {
 
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_profile, container, false);
-    }
-
     MainActivity activity;
 
     TextView username;
@@ -30,8 +25,13 @@ public class ProfileFragment extends Fragment {
     CheckBox remember;
 
     @Override
-    public void onResume() {
-        super.onResume();
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        return inflater.inflate(R.layout.fragment_profile, container, false);
+    }
+
+    @Override
+    public void onActivityCreated (Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
 
         activity = (MainActivity) getActivity();
 
@@ -47,7 +47,7 @@ public class ProfileFragment extends Fragment {
         type.setText(activity.viewModel.getUser().getValue().permission);
         organization.setText(activity.viewModel.getUser().getValue().organization);
 
-        activity.viewModel.getUser().observe(this, user -> {
+        activity.viewModel.getUser().observe(getViewLifecycleOwner(), user -> {
             username.setText(user.name);
             type.setText(user.permission);
             organization.setText(user.organization);

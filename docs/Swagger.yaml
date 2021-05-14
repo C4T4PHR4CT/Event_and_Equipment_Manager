@@ -1,0 +1,576 @@
+swagger: '2.0'
+info:
+  description: |
+    AND1 Project
+  version: pre-alpha-1.0
+  title: Event & Equipment Manager
+paths:
+  /token:
+    get:
+      summary: returns jwt, provided that the username and password is correct
+      parameters:
+      - in: header
+        name: Authorization
+        required: true
+        type: string
+        description: Basic Authorization
+      produces:
+      - text/plain
+      responses:
+        200:
+          description: JSON Web Token using HS256 algorithm
+          schema:
+            example: Header.Payload.Signature
+        401:
+          description: Unauthorized
+          schema:
+            example: Incorrect credentials
+  /user:
+    get:
+      summary: returns all users
+      parameters:
+      - in: header
+        name: Authorization
+        required: true
+        type: string
+        description: Bearer Authorization
+      produces:
+      - application/json
+      responses:
+        200:
+          description: Ok
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/user'
+        401:
+          description: Unauthorized
+          schema:
+            example: Authorization failed!
+        403:
+          description: Forbidden
+          schema:
+            example: You don't have high enough security clearance for this operation!
+    post:
+      summary: creates a new user
+      parameters:
+      - in: header
+        name: Authorization
+        required: false
+        type: string
+        description: Bearer Authorization
+      - in: body
+        name: user
+        description: user to create
+        required: true
+        schema:
+            $ref: '#/definitions/user'
+      produces:
+      - application/json
+      responses:
+        200:
+          description: Created
+        401:
+          description: Unauthorized
+          schema:
+            example: Authorization failed!
+        403:
+          description: Forbidden
+          schema:
+            example: You don't have high enough security clearance for this operation!
+        409:
+          description: Conflict
+          schema:
+            example: username taken
+  /user/id/{id}:
+    get:
+      summary: returns the user with the given id
+      parameters:
+      - in: header
+        name: Authorization
+        required: true
+        type: string
+        description: Bearer Authorization
+      - name: id
+        in: path
+        description: id of the user to return
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        200:
+          description: Ok
+          schema:
+            $ref: '#/definitions/user'
+        401:
+          description: Unauthorized
+          schema:
+            example: Authorization failed!
+        403:
+          description: Forbidden
+          schema:
+            example: You don't have high enough security clearance for this operation!
+        404:
+          description: Not Found
+    delete:
+      summary: deletes the user with the given id
+      parameters:
+      - in: header
+        name: Authorization
+        required: true
+        type: string
+        description: Bearer Authorization
+      - name: id
+        in: path
+        description: id of the user to delete
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        200:
+          description: Deleted
+        401:
+          description: Unauthorized
+          schema:
+            example: Authorization failed!
+        403:
+          description: Forbidden
+          schema:
+            example: You don't have high enough security clearance for this operation!
+        404:
+          description: Not Found
+    put:
+      summary: updates the user with the given id
+      parameters:
+      - in: header
+        name: Authorization
+        required: true
+        type: string
+        description: Bearer Authorization
+      - name: id
+        in: path
+        description: id of the user to update
+        required: true
+        type: integer
+      - in: body
+        name: user
+        description: user details to update
+        required: true
+        schema:
+            $ref: '#/definitions/user'
+      produces:
+      - application/json
+      responses:
+        200:
+          description: Updated
+        401:
+          description: Unauthorized
+          schema:
+            example: Authorization failed!
+        403:
+          description: Forbidden
+          schema:
+            example: You don't have high enough security clearance for this operation!
+        404:
+          description: Not Found
+        409:
+          description: Conflict
+          schema:
+            example: username taken
+  /user/name/{username}:
+    get:
+      summary: returns the user with the given username
+      parameters:
+      - in: header
+        name: Authorization
+        required: true
+        type: string
+        description: Bearer Authorization
+      - name: username
+        in: path
+        description: username of the user to return
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        200:
+          description: Ok
+          schema:
+            $ref: '#/definitions/user'
+        401:
+          description: Unauthorized
+          schema:
+            example: Authorization failed!
+        403:
+          description: Forbidden
+          schema:
+            example: You don't have high enough security clearance for this operation!
+        404:
+          description: Not Found
+  /user/me:
+    get:
+      summary: returns the authenticated user
+      parameters:
+      - in: header
+        name: Authorization
+        required: true
+        type: string
+        description: Bearer Authorization
+      produces:
+      - application/json
+      responses:
+        200:
+          description: Ok
+          schema:
+            $ref: '#/definitions/user'
+        401:
+          description: Unauthorized
+          schema:
+            example: Authorization failed!
+  /event:
+    get:
+      summary: returns all non hidden events
+      parameters:
+      - in: header
+        name: Authorization
+        required: true
+        type: string
+        description: Bearer Authorization
+      - in: query
+        name: equipmentId
+        type: integer
+      - in: query
+        name: from
+        type: integer
+        description: "DateTime from when events are requested. Format: number of milliseconds since the standard base time January 1, 1970, 00:00:00 GMT."
+      - in: query
+        name: until
+        type: integer
+        description: "DateTime until when events are requested. Format: number of milliseconds since the standard base time January 1, 1970, 00:00:00 GMT."
+      produces:
+      - application/json
+      responses:
+        200:
+          description: Array of Events
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/event'
+        401:
+          description: Unauthorized
+    post:
+      summary: creates new event
+      parameters:
+      - in: header
+        name: Authorization
+        required: true
+        type: string
+        description: Bearer Authorization
+      - in: body
+        name: Event
+        required: true
+        description: Event
+        schema:
+          $ref: '#/definitions/event'
+      produces:
+      - text/plain
+      responses:
+        200:
+          description: Created
+        401:
+          description: Unauthorized
+        409:
+          description: "Conflict, descriptive error message detailing which equipments are not available in given timeframe."
+          schema:
+            example: "Equipment 0 (id) \"Yamaha LS9-32\" not available\nEquipment 1 (id) \"Yamaha CW118V\" not available"
+  /event/{EventId}:
+    get:
+      summary: returns event with given id
+      parameters:
+      - in: header
+        name: Authorization
+        required: true
+        type: string
+        description: Bearer Authorization
+      - name: EventId
+        in: path
+        description: Id of the event to return
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        200:
+          description: Event
+          schema:
+            $ref: '#/definitions/event'
+        401:
+          description: Unauthorized
+        404:
+          description: Not Found
+    delete:
+      summary: deletes event with given id
+      parameters:
+      - in: header
+        name: Authorization
+        required: true
+        type: string
+        description: Bearer Authorization
+      - name: EventId
+        in: path
+        description: Id of the event to delete
+        required: true
+        type: integer
+      produces:
+      - text/plain
+      responses:
+        200:
+          description: Deleted
+        401:
+          description: Unauthorized
+        404:
+          description: Not Found
+    put:
+      summary: updates event with given id
+      parameters:
+      - in: header
+        name: Authorization
+        required: true
+        type: string
+        description: Bearer Authorization
+      - name: EventId
+        in: path
+        description: Id of the event to update
+        required: true
+        type: integer
+      - in: body
+        name: Event
+        required: true
+        description: Event with updated attributes
+        schema:
+          $ref: '#/definitions/event'
+      produces:
+      - text/plain
+      responses:
+        200:
+          description: Updated
+        401:
+          description: Unauthorized
+        404:
+          description: Not Found
+        409:
+          description: "Conflict, descriptive error message detailing which equipments are not available in given timeframe."
+          schema:
+            example: "Equipment 0 (id) \"Yamaha LS9-32\" not available\nEquipment 1 (id) \"Yamaha CW118V\" not available"
+  /equipment:
+    get:
+      summary: returns all equipments
+      parameters:
+      - in: header
+        name: Authorization
+        required: true
+        type: string
+        description: Bearer Authorization
+      - in: query
+        name: eventId
+        type: integer
+      produces:
+      - application/json
+      responses:
+        200:
+          description: Array of Equipments
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/equipment'
+        401:
+          description: Unauthorized
+    post:
+      summary: creates new equipment
+      parameters:
+      - in: header
+        name: Authorization
+        required: true
+        type: string
+        description: Bearer Authorization
+      - in: body
+        name: Equipment
+        required: true
+        description: Equipment
+        schema:
+          $ref: '#/definitions/equipment'
+      produces:
+      - text/plain
+      responses:
+        200:
+          description: Created
+        401:
+          description: Unauthorized
+  /equipment/{EquipmentId}:
+    get:
+      summary: returns equipment with given id
+      parameters:
+      - in: header
+        name: Authorization
+        required: true
+        type: string
+        description: Bearer Authorization
+      - name: EquipmentId
+        in: path
+        description: Id of the equipment to return
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        200:
+          description: Equipment
+          schema:
+            $ref: '#/definitions/equipment'
+        401:
+          description: Unauthorized
+        404:
+          description: Not Found
+    delete:
+      summary: deletes equipment with given id
+      parameters:
+      - in: header
+        name: Authorization
+        required: true
+        type: string
+        description: Bearer Authorization
+      - name: EquipmentId
+        in: path
+        description: Id of the equipment to delete
+        required: true
+        type: integer
+      produces:
+      - text/plain
+      responses:
+        200:
+          description: Deleted
+        401:
+          description: Unauthorized
+        404:
+          description: Not Found
+    put:
+      summary: updates equipment with given id
+      parameters:
+      - in: header
+        name: Authorization
+        required: true
+        type: string
+        description: Bearer Authorization
+      - name: EquipmentId
+        in: path
+        description: Id of the equipment to update
+        required: true
+        type: integer
+      - in: body
+        name: Event
+        required: true
+        description: Equipment with updated attributes
+        schema:
+          $ref: '#/definitions/equipment'
+      produces:
+      - text/plain
+      responses:
+        200:
+          description: Updated
+        401:
+          description: Unauthorized
+        404:
+          description: Not Found
+        409:
+          description: "Conflict, descriptive error message detailing which events are conflicting in the involved equipment's scope."
+          schema:
+            example: "Event 0 (id) \"Generali Night Run Budapest\" conflicts with Event 1 (id) \"Sólet Fesztivál\"\nEvent 2 (id) \"Kolbi Fesztivál\" conflicts with Event 3 (id) \"Bableves Fesztivál\""
+definitions:
+  event:
+    type: object
+    properties:
+      id:
+        type: integer
+        example: 1
+      name:
+        type: string
+        example: Generali Night Run Budapest
+      hidden:
+        type: boolean
+        example: false
+        description: There are some autogenerated events like repair periods for equipment, which are only manageable indirectly. These events only show up in the equipment’s reserved history, while being hidden in the events calendar.
+      start:
+        type: integer
+        example: 1492992000000
+        description: "DateTime, format: number of milliseconds since the standard base time January 1, 1970, 00:00:00 GMT."
+      end:
+        type: integer
+        example: 1493078400000
+        description: "DateTime, format: number of milliseconds since the standard base time January 1, 1970, 00:00:00 GMT."
+      equipments:
+        type: array
+        items:
+          type: object
+          properties:
+            id:
+              type: integer
+              example: 1
+            name:
+              type: string
+              example: Yamaha LS9-32
+  equipment:
+    type: object
+    properties:
+      id:
+        type: integer
+        example: 1
+      name:
+        type: string
+        example: Yamaha LS9-32
+      category:
+        type: string
+        example: Audio Racks
+      events:
+        type: array
+        items:
+          type: object
+          properties:
+            id:
+              type: integer
+              example: 1
+            name:
+              type: string
+              example: Generali Night Run Budapest
+            hidden:
+              type: boolean
+              example: false
+              description: There are some autogenerated events like repair periods for equipment, which are only manageable indirectly. These events only show up in the equipment’s reserved history, while being hidden in the events calendar.
+            start:
+              type: integer
+              example: 1492992000000
+              description: "DateTime, format: number of milliseconds since the standard base time January 1, 1970, 00:00:00 GMT."
+            end:
+              type: integer
+              example: 1493078400000
+              description: "DateTime, format: number of milliseconds since the standard base time January 1, 1970, 00:00:00 GMT."
+  user:
+    type: object
+    properties:
+      id:
+        type: integer
+        example: 1
+      name:
+        type: string
+        example: Bob
+      password:
+        type: string
+        example: Kolbasz1234
+      permission:
+        type: string
+        example: employee
+      organization:
+        type: string
+        example: "Event-Audio limited company"

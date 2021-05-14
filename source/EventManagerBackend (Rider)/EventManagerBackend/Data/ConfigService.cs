@@ -35,6 +35,21 @@ namespace EventManagerBackend.Data
             }
         }
         private static bool? _https;
+        public bool Swagger
+        {
+            get {
+                if (!_initialized)
+                    Initialize();
+                return _swagger ?? false;
+            }
+            set {
+                if (!_initialized)
+                    Initialize();
+                _swagger = value;
+                SaveConfig();
+            }
+        }
+        private static bool? _swagger;
         public string DbHost
         {
             get { 
@@ -125,36 +140,51 @@ namespace EventManagerBackend.Data
             }
         }
         private static string _dbSchema;
-        public string Secret
+        public byte[] JwtKey
         {
             get { 
                 if (!_initialized)
                     Initialize();
-                return _secret;
+                return _jwtKey;
             }
             set {
                 if (!_initialized)
                     Initialize();
-                _secret = value;
+                _jwtKey = value;
                 SaveConfig();
             }
         }
-        private static string _secret;
-        public bool CheckIntegrityOnStartup
+        private static byte[] _jwtKey;
+        public byte[] Salt
         {
-            get {
+            get { 
                 if (!_initialized)
                     Initialize();
-                return _checkIntegrityOnStartup ?? false;
+                return _salt;
             }
             set {
                 if (!_initialized)
                     Initialize();
-                _checkIntegrityOnStartup = value;
+                _salt = value;
                 SaveConfig();
             }
         }
-        private static bool? _checkIntegrityOnStartup;
+        private static byte[] _salt;
+        public bool ReInitializeDb
+        {
+            get { 
+                if (!_initialized)
+                    Initialize();
+                return _reInitializeDb ?? false;
+            }
+            set {
+                if (!_initialized)
+                    Initialize();
+                _reInitializeDb = value;
+                SaveConfig();
+            }
+        }
+        private static bool? _reInitializeDb;
         public int TokenExpire
         {
             get {
@@ -170,6 +200,21 @@ namespace EventManagerBackend.Data
             }
         }
         private static int? _tokenExpire;
+        public int UserPostPermissionLevel
+        {
+            get { 
+                if (!_initialized)
+                    Initialize();
+                return _userPostPermissionLevel ?? 4;
+            }
+            set {
+                if (!_initialized)
+                    Initialize();
+                _userPostPermissionLevel = value;
+                SaveConfig();
+            }
+        }
+        private static int? _userPostPermissionLevel;
 
         private static bool _initialized = false;
 

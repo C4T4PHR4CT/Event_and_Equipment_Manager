@@ -1,13 +1,16 @@
 {
   "Port": 5000,
   "Https": true,
-  "DbHost": "localhost",
-  "DbPort": 5432,
-  "DbName": "postgres",
-  "DbUser": "postgres",
-  "DbPassword": "postgres",
-  "DbSchema": "event_and_equipment_manager",
-  "Secret": "megszentsegtelenithetetlensegeskedeseitekert",
-  "CheckIntegrityOnStartup": false,
-  "TokenExpire": 60
+  "Swagger": true,
+  "DbHost": "127.0.0.1",
+  "DbPort": 1433,
+  "DbName": "EventManager",
+  "DbUser": "Admin",
+  "DbPassword": "mssql",
+  "DbSchema": "dbo",
+  "JwtKey": "RPCx6IxEGJ4zy5Y0p56T5g==",
+  "Salt": "7vX6kE37ge0kvbUjYHUo9g==",
+  "ReInitializeDb": true,
+  "TokenExpire": 0,
+  "UserPostPermissionLevel": 0
 }

@@ -1,3 +1,4 @@
+using System.Security.Cryptography;
 using EventManagerBackend.Data;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
@@ -11,6 +12,8 @@ namespace EventManagerBackend
 {
     public class Startup
     {
+        private IConfigService _config;
+        
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -21,11 +24,22 @@ namespace EventManagerBackend
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
-            ConfigService configService = new ConfigService();
-            PersistenceServiceMs persistenceService = new PersistenceServiceMs(configService);
-            if (configService.CheckIntegrityOnStartup)
+            _config = new ConfigService();
+            PersistenceServiceMs persistenceService = new PersistenceServiceMs(_config);
+            if (_config.ReInitializeDb)
+            {
+                var bytes1 = new byte[128 / 8];
+                var bytes2 = new byte[128 / 8];
+                using var generator = RandomNumberGenerator.Create();
+                generator.GetBytes(bytes1);
+                generator.GetBytes(bytes2);
+                _config.Salt = bytes1;
+                _config.JwtKey = bytes2;
+                persistenceService.DropSchema();
+                persistenceService.InitSchema();
                 persistenceService.CheckIntegrity();
-            services.AddSingleton<IConfigService, ConfigService>(init => configService);
+            }
+            services.AddSingleton<IConfigService, IConfigService>(init => _config);
             services.AddSingleton<IPersistenceService, PersistenceServiceMs>(init => persistenceService);
             services.AddSingleton<ILogService, LogService>();
             services.AddSwaggerGen(c => {
@@ -66,12 +80,14 @@ namespace EventManagerBackend
         
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            if (env.IsDevelopment())
+            if (env.IsDevelopment()) 
             {
                 app.UseDeveloperExceptionPage();
+            }
+            if (env.IsDevelopment() || _config.Swagger)
+            {
                 app.UseSwagger();
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "AuthorAPI v1"));
-                app.UseHttpsRedirection();
             }
 
             app.UseRouting();

@@ -8,7 +8,7 @@ namespace EventManagerBackend
     {
         public static void Main(string[] args)
         {
-            var config = new ConfigService();
+            IConfigService config = new ConfigService();
             int port = config.Port;
             string[] ports;
             if (config.Https)

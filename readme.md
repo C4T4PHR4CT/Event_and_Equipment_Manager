@@ -32,8 +32,8 @@ The delimitations of the project are:
 ### Analysis
 #### Functional Requirements
 Must have:
-- [ ] login
-- [ ] view existing events
+- [x] login
+- [x] view existing events
 - [ ] view event details (including assigned equipments)
 - [ ] view existing equipments
 - [ ] view equipment details (including assigned events)
@@ -47,7 +47,7 @@ Should have:
 - [ ] edit equipment details
 - [ ] assign/deassign event’s associated equipments
 - [ ] assign/deassign equipment’s associated events
-- [ ] view profile
+- [x] view profile
 
 Could have:
 - [ ] edit owned organization details
@@ -65,4 +65,5 @@ Would like to have:
 - [ ] further admin/developer exclusive operations (detailed in use case diagram)
 #### Non-Functional Requirements
 Must have:
-- [ ] Persist data to local storage, to have a read only access if internet is not available.
+- [x] persist login details
+- [x] persist token to keep login session

@@ -3,6 +3,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 using Microsoft.AspNetCore.Http;
 using Microsoft.IdentityModel.Tokens;
 
@@ -45,7 +46,7 @@ namespace EventManagerBackend.Data
                     throw new Exception("malformed bearer authorization header");
                 token = temp[1];
                 var tokenHandler = new JwtSecurityTokenHandler();
-                var key = Encoding.ASCII.GetBytes(_config.Secret);
+                var key = _config.JwtKey;
                 tokenHandler.ValidateToken(token, new TokenValidationParameters
                 {
                     ValidateIssuerSigningKey = true,
@@ -77,8 +78,9 @@ namespace EventManagerBackend.Data
                 temp = Encoding.UTF8.GetString(Convert.FromBase64String(temp[1])).Split(":");
                 if (temp.Length != 2)
                     throw new Exception("malformed basic authorization header");
+                temp[1] = Convert.ToBase64String(KeyDerivation.Pbkdf2(temp[1], _config.Salt, KeyDerivationPrf.HMACSHA1, 1000, 256 / 8));
                 if (_persistence.CheckUserPassword(temp[0], temp[1]))
-                    context.Items["User"] = _persistence.GetUser(temp[0]);
+                    context.Items["User"] = _persistence.GetUserByName(temp[0]);
                 else
                     throw new Exception("invalid basic authorization credentials");
                 return true;

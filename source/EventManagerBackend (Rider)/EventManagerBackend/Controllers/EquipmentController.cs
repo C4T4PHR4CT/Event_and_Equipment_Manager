@@ -27,9 +27,17 @@ namespace EventManagerBackend.Controllers
                     throw new UnauthorizedException("Authorization failed!");
                 User user = (User) HttpContext.Items["User"];
                 if (user.PermissionLevel < 2)
-                    throw new UnauthorizedException("You don't have high enough clearance for this operation!");
+                    throw new ForbiddenException("You don't have high enough clearance for this operation!");
                 Equipment[] temp = _persistence.GetEquipments(eventId, user.OrganizationId);
                 return StatusCode(200, temp);
+            }
+            catch (UnauthorizedException e)
+            {
+                return StatusCode(401, e.Message);
+            }
+            catch (ForbiddenException e)
+            {
+                return StatusCode(403, e.Message);
             }
             catch (NotFoundException e)
             {
@@ -38,10 +46,6 @@ namespace EventManagerBackend.Controllers
             catch (ConflictException e)
             {
                 return StatusCode(409, e.Message);
-            }
-            catch (UnauthorizedException e)
-            {
-                return StatusCode(403, e.Message);
             }
             catch (Exception e)
             {
@@ -59,7 +63,7 @@ namespace EventManagerBackend.Controllers
                     throw new UnauthorizedException("Authorization failed!");
                 User user = (User) HttpContext.Items["User"];
                 if (user.PermissionLevel < 3)
-                    throw new UnauthorizedException("You don't have high enough clearance for this operation!");
+                    throw new ForbiddenException("You don't have high enough clearance for this operation!");
                 int eqId = _persistence.AddEquipment(equipment, (int) user.OrganizationId);
                 if (equipment.Events == null) return StatusCode(200);
                 string error = "";
@@ -79,6 +83,14 @@ namespace EventManagerBackend.Controllers
                     throw new ConflictException(error.Substring(0, error.Length - 1));
                 return StatusCode(200);
             }
+            catch (UnauthorizedException e)
+            {
+                return StatusCode(401, e.Message);
+            }
+            catch (ForbiddenException e)
+            {
+                return StatusCode(403, e.Message);
+            }
             catch (NotFoundException e)
             {
                 return StatusCode(404, e.Message);
@@ -86,10 +98,6 @@ namespace EventManagerBackend.Controllers
             catch (ConflictException e)
             {
                 return StatusCode(409, e.Message);
-            }
-            catch (UnauthorizedException e)
-            {
-                return StatusCode(403, e.Message);
             }
             catch (Exception e)
             {
@@ -107,12 +115,20 @@ namespace EventManagerBackend.Controllers
                     throw new UnauthorizedException("Authorization failed!");
                 User user = (User) HttpContext.Items["User"];
                 if (user.PermissionLevel < 2)
-                    throw new UnauthorizedException("You don't have high enough clearance for this operation!");
-                if (_persistence.GetEquipmentOrgId(equipmentId) != user.OrganizationId && user.OrganizationId != null)
-                    throw new UnauthorizedException("The requested Equipment is owned by a different organization!");
+                    throw new ForbiddenException("You don't have high enough clearance for this operation!");
+                if (user.OrganizationId != null && _persistence.GetEquipmentOrgId(equipmentId) != user.OrganizationId)
+                    throw new ForbiddenException("The requested Equipment is owned by a different organization!");
                 Equipment temp = _persistence.GetEquipment(equipmentId);
                 temp.Events = _persistence.GetEvents(equipmentId, null, null, null);
                 return StatusCode(200, temp);
+            }
+            catch (UnauthorizedException e)
+            {
+                return StatusCode(401, e.Message);
+            }
+            catch (ForbiddenException e)
+            {
+                return StatusCode(403, e.Message);
             }
             catch (NotFoundException e)
             {
@@ -121,10 +137,6 @@ namespace EventManagerBackend.Controllers
             catch (ConflictException e)
             {
                 return StatusCode(409, e.Message);
-            }
-            catch (UnauthorizedException e)
-            {
-                return StatusCode(403, e.Message);
             }
             catch (Exception e)
             {
@@ -142,11 +154,19 @@ namespace EventManagerBackend.Controllers
                     throw new UnauthorizedException("Authorization failed!");
                 User user = (User) HttpContext.Items["User"];
                 if (user.PermissionLevel < 3)
-                    throw new UnauthorizedException("You don't have high enough clearance for this operation!");
-                if (_persistence.GetEquipmentOrgId(equipmentId) != user.OrganizationId && user.OrganizationId != null)
-                    throw new UnauthorizedException("The requested Equipment is owned by a different organization!");
+                    throw new ForbiddenException("You don't have high enough clearance for this operation!");
+                if (user.OrganizationId != null && _persistence.GetEquipmentOrgId(equipmentId) != user.OrganizationId)
+                    throw new ForbiddenException("The requested Equipment is owned by a different organization!");
                 _persistence.DeleteEquipment(equipmentId);
                 return StatusCode(200);
+            }
+            catch (UnauthorizedException e)
+            {
+                return StatusCode(401, e.Message);
+            }
+            catch (ForbiddenException e)
+            {
+                return StatusCode(403, e.Message);
             }
             catch (NotFoundException e)
             {
@@ -155,10 +175,6 @@ namespace EventManagerBackend.Controllers
             catch (ConflictException e)
             {
                 return StatusCode(409, e.Message);
-            }
-            catch (UnauthorizedException e)
-            {
-                return StatusCode(403, e.Message);
             }
             catch (Exception e)
             {
@@ -176,9 +192,9 @@ namespace EventManagerBackend.Controllers
                     throw new UnauthorizedException("Authorization failed!");
                 User user = (User) HttpContext.Items["User"];
                 if (user.PermissionLevel < 3)
-                    throw new UnauthorizedException("You don't have high enough clearance for this operation!");
-                if (_persistence.GetEquipmentOrgId(equipmentId) != user.OrganizationId && user.OrganizationId != null)
-                    throw new UnauthorizedException("The requested Equipment is owned by a different organization!");
+                    throw new ForbiddenException("You don't have high enough clearance for this operation!");
+                if (user.OrganizationId != null && _persistence.GetEquipmentOrgId(equipmentId) != user.OrganizationId)
+                    throw new ForbiddenException("The requested Equipment is owned by a different organization!");
                 equipment.Id = equipmentId;
                 _persistence.UpdateEquipment(equipment);
                 if (equipment.Events == null) return StatusCode(200);
@@ -208,6 +224,14 @@ namespace EventManagerBackend.Controllers
                     throw new ConflictException(error.Substring(0, error.Length - 1));
                 return StatusCode(200);
             }
+            catch (UnauthorizedException e)
+            {
+                return StatusCode(401, e.Message);
+            }
+            catch (ForbiddenException e)
+            {
+                return StatusCode(403, e.Message);
+            }
             catch (NotFoundException e)
             {
                 return StatusCode(404, e.Message);
@@ -215,10 +239,6 @@ namespace EventManagerBackend.Controllers
             catch (ConflictException e)
             {
                 return StatusCode(409, e.Message);
-            }
-            catch (UnauthorizedException e)
-            {
-                return StatusCode(403, e.Message);
             }
             catch (Exception e)
             {

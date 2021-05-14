@@ -32,7 +32,37 @@ namespace EventManagerBackend.Data
             return false;
         }
 
-        public User GetUser(string user)
+        public int GetOrganization(string organization)
+        {
+            throw new NotImplementedException();
+        }
+
+        public int GetPermissionLevel(string permission)
+        {
+            throw new NotImplementedException();
+        }
+
+        public int CreateUser(User user)
+        {
+            throw new NotImplementedException();
+        }
+
+        public User[] GetAllUsers(int? organizationId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void DeleteUser(int userId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void UpdateUser(User user)
+        {
+            throw new NotImplementedException();
+        }
+
+        public User GetUserByName(string user)
         {
             using (var connection = new NpgsqlConnection("User ID=" + _config.DbUser + ";Password=" + _config.DbPassword + ";Host=" + _config.DbHost + ";Database=" + _config.DbName + ";Port=" + _config.DbPort))
             {
@@ -528,6 +558,16 @@ namespace EventManagerBackend.Data
                 Console.WriteLine("[PersistenceService] Database Integrity Check completed, no errors has been found");
             else
                 Console.WriteLine("[PersistenceService] Database Integrity Check completed, the following errors has been found and corrected:\n" + error);
+        }
+
+        public void DropSchema()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void InitSchema()
+        {
+            throw new NotImplementedException();
         }
     }
 }

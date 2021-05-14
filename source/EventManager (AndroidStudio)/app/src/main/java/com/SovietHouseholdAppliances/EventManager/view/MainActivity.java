@@ -42,14 +42,17 @@ public class MainActivity extends AppCompatActivity {
 
         viewModel = new ViewModelProvider(this).get(MainViewModel.class);
 
+        final boolean[] firstTrigger = {savedInstanceState != null};
         viewModel.getActiveFragment().observe(this, newFragment -> {
-            try {
-                Fragment temp = newFragment.newInstance();
-                FragmentManager fragmentManager = getSupportFragmentManager();
-                FragmentTransaction transaction = fragmentManager.beginTransaction();
-                transaction.replace(fragment.getId(), temp);
-                transaction.commit();
-            } catch (IllegalAccessException|InstantiationException ignored) {}
+            if (!firstTrigger[0])
+                try {
+                    Fragment temp = newFragment.newInstance();
+                    FragmentManager fragmentManager = getSupportFragmentManager();
+                    FragmentTransaction transaction = fragmentManager.beginTransaction();
+                    transaction.replace(fragment.getId(), temp);
+                    transaction.commit();
+                } catch (IllegalAccessException|InstantiationException ignored) {}
+            firstTrigger[0] = false;
         });
 
         viewModel.getAlert().observe(this, alert -> {
