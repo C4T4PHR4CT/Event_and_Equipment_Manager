@@ -16,9 +16,9 @@ import retrofit2.Response;
 
 public class MainViewModel extends ViewModel {
 
+    private final MutableLiveData<String> alert;
     private final MutableLiveData<Class<? extends Fragment>> activeFragment;
     private final MutableLiveData<User> user;
-    private final MutableLiveData<String> alert;
     private final MutableLiveData<Event[]> events;
 
     public MainViewModel() {
@@ -85,7 +85,7 @@ public class MainViewModel extends ViewModel {
         });
     }
 
-    public void refresEvents(Integer equipmentId, Long from, Long until) {
+    public void refreshEvents(Integer equipmentId, Long from, Long until) {
         RetrofitClient.getInstance().getEventManagerApi().getAllEvents(Preferences.getInstance().getToken(), equipmentId, from, until).enqueue(new Callback<Event[]>() {
             @Override
             public void onResponse(@NonNull Call<Event[]> call, @NonNull Response<Event[]> response) {

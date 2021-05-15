@@ -1,6 +1,7 @@
 package com.SovietHouseholdAppliances.EventManager.view;
 
 import android.app.DatePickerDialog;
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -15,13 +16,11 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.SovietHouseholdAppliances.EventManager.R;
-import com.SovietHouseholdAppliances.EventManager.model.Equipment;
-import com.SovietHouseholdAppliances.EventManager.model.Event;
+import com.SovietHouseholdAppliances.EventManager.model.MyLocalDateTime;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 
 public class EventFragment extends Fragment implements EventAdapter.ItemClickListener {
 
@@ -29,8 +28,8 @@ public class EventFragment extends Fragment implements EventAdapter.ItemClickLis
 
     TextView filter_from;
     TextView filter_until;
-    LocalDate filter_selected_from;
-    LocalDate filter_selected_until;
+    MyLocalDateTime filter_selected_from;
+    MyLocalDateTime filter_selected_until;
 
     FloatingActionButton addEvent;
     RecyclerView recyclerView;
@@ -40,11 +39,13 @@ public class EventFragment extends Fragment implements EventAdapter.ItemClickLis
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         if (filter_selected_from == null && filter_selected_until == null)
             if (savedInstanceState == null) {
-                filter_selected_from = LocalDateTime.now().toLocalDate();
-                filter_selected_until = filter_selected_from.plusMonths(1);
+                filter_selected_from = new MyLocalDateTime();
+                filter_selected_from.dateTime = filter_selected_from.dateTime.withHour(0).withMinute(0).withSecond(0);
+                filter_selected_until = new MyLocalDateTime();
+                filter_selected_until.dateTime = filter_selected_until.dateTime.plusMonths(1).withHour(0).withMinute(0).withSecond(0);
             } else  {
-                filter_selected_from = (LocalDate) savedInstanceState.getSerializable("filter_selected_from");
-                filter_selected_until = (LocalDate) savedInstanceState.getSerializable("filter_selected_until");
+                filter_selected_from = new MyLocalDateTime((LocalDateTime) savedInstanceState.getSerializable("filter_selected_from"));
+                filter_selected_until = new MyLocalDateTime((LocalDateTime) savedInstanceState.getSerializable("filter_selected_until"));
             }
         return inflater.inflate(R.layout.fragment_event, container, false);
     }
@@ -58,30 +59,32 @@ public class EventFragment extends Fragment implements EventAdapter.ItemClickLis
         filter_from = activity.findViewById(R.id.event_filter_from);
         filter_until = activity.findViewById(R.id.event_filter_until);
 
-        filter_from.setText(formatDate(filter_selected_from));
-        filter_until.setText(formatDate(filter_selected_until));
+        filter_from.setText(filter_selected_from.getDate());
+        filter_until.setText(filter_selected_until.getDate());
 
         filter_from.setOnClickListener(e -> {
             DatePickerDialog dialog = new DatePickerDialog(activity, (view, year, month, dayOfMonth) -> {
-                filter_selected_from = LocalDate.of(year, month, dayOfMonth);
-                filter_from.setText(formatDate(filter_selected_from));
-                activity.viewModel.refresEvents(null, filter_selected_from.toEpochDay() * 24 * 60 * 60 * 1000, filter_selected_until.toEpochDay() * 24 * 60 * 60 * 1000);
-            }, filter_selected_from.getYear(), filter_selected_from.getMonthValue(), filter_selected_from.getDayOfMonth());
+                filter_selected_from = new MyLocalDateTime(LocalDate.of(year, month, dayOfMonth));
+                filter_from.setText(filter_selected_from.getDate());
+                activity.viewModel.refreshEvents(null, filter_selected_from.getEpochMilis(), filter_selected_until.getEpochMilis());
+            }, filter_selected_from.dateTime.getYear(), filter_selected_from.dateTime.getMonthValue(), filter_selected_from.dateTime.getDayOfMonth());
             dialog.show();
         });
 
         filter_until.setOnClickListener(e -> {
             DatePickerDialog dialog = new DatePickerDialog(activity, (view, year, month, dayOfMonth) -> {
-                filter_selected_until = LocalDate.of(year, month, dayOfMonth);
-                filter_until.setText(formatDate(filter_selected_until));
-                activity.viewModel.refresEvents(null, filter_selected_from.toEpochDay() * 24 * 60 * 60 * 1000, filter_selected_until.toEpochDay() * 24 * 60 * 60 * 1000);
-            }, filter_selected_until.getYear(), filter_selected_until.getMonthValue(), filter_selected_until.getDayOfMonth());
+                filter_selected_until = new MyLocalDateTime(LocalDate.of(year, month, dayOfMonth));
+                filter_until.setText(filter_selected_until.getDate());
+                activity.viewModel.refreshEvents(null, filter_selected_from.getEpochMilis(), filter_selected_until.getEpochMilis());
+            }, filter_selected_until.dateTime.getYear(), filter_selected_until.dateTime.getMonthValue(), filter_selected_until.dateTime.getDayOfMonth());
             dialog.show();
         });
 
         addEvent = activity.findViewById(R.id.event_add);
         addEvent.setOnClickListener(e -> {
-            MainActivity.print("adding event");
+            Intent temp = new Intent(activity, EventEditActivity.class);
+            temp.putExtra("isEdit", false);
+            activity.startActivity(temp);
         });
 
         recyclerView = activity.findViewById(R.id.event_list);
@@ -94,22 +97,27 @@ public class EventFragment extends Fragment implements EventAdapter.ItemClickLis
             recyclerView.setAdapter(adapter);
         });
 
-        activity.viewModel.refresEvents(null, filter_selected_from.toEpochDay() * 24 * 60 * 60 * 1000, filter_selected_until.toEpochDay() * 24 * 60 * 60 * 1000);
+        activity.viewModel.refreshEvents(null, filter_selected_from.getEpochMilis(), filter_selected_until.getEpochMilis());
     }
 
-    private String formatDate(LocalDate date) {
-        return DateTimeFormatter.ofPattern("dd/MM/yyyy").format(date);
+    @Override
+    public void onResume() {
+        super.onResume();
+        activity.viewModel.refreshEvents(null, filter_selected_from.getEpochMilis(), filter_selected_until.getEpochMilis());
     }
 
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
-        outState.putSerializable("filter_selected_from", filter_selected_from);
-        outState.putSerializable("filter_selected_until", filter_selected_until);
+        outState.putSerializable("filter_selected_from", filter_selected_from.dateTime);
+        outState.putSerializable("filter_selected_until", filter_selected_until.dateTime);
         super.onSaveInstanceState(outState);
     }
 
     @Override
     public void onItemClick(View view, int eventId) {
-        MainActivity.print(eventId+ "");
+        Intent temp = new Intent(activity, EventEditActivity.class);
+        temp.putExtra("isEdit", true);
+        temp.putExtra("eventId", eventId);
+        activity.startActivity(temp);
     }
 }

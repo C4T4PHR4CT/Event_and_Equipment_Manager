@@ -12,14 +12,10 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.SovietHouseholdAppliances.EventManager.R;
 import com.SovietHouseholdAppliances.EventManager.model.Event;
+import com.SovietHouseholdAppliances.EventManager.model.MyLocalDateTime;
 
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
-import java.time.format.DateTimeFormatter;
-import java.time.format.TextStyle;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Locale;
 
 public class EventAdapter extends RecyclerView.Adapter<EventAdapter.ViewHolder> {
 
@@ -29,7 +25,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.ViewHolder> 
 
     EventAdapter(Context context, Event[] events) {
         this.mInflater = LayoutInflater.from(context);
-        this.events = Arrays.asList(events);;
+        this.events = Arrays.asList(events);
     }
 
     @NonNull
@@ -43,10 +39,12 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.ViewHolder> 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         holder.name.setText(events.get(position).name);
-        holder.from.setText(formatDate(LocalDateTime.ofEpochSecond(events.get(position).start / 1000, 0, ZoneOffset.ofHours(0))));
-        holder.until.setText(formatDate(LocalDateTime.ofEpochSecond(events.get(position).end / 1000, 0, ZoneOffset.ofHours(0))));
-        holder.fromDay.setText("(" + LocalDateTime.ofEpochSecond(events.get(position).start / 1000, 0, ZoneOffset.ofHours(0)).getDayOfWeek().getDisplayName(TextStyle.FULL, Locale.getDefault()) + ")");
-        holder.untilDay.setText("(" + LocalDateTime.ofEpochSecond(events.get(position).end / 1000, 0, ZoneOffset.ofHours(0)).getDayOfWeek().getDisplayName(TextStyle.FULL, Locale.getDefault()) + ")");
+        MyLocalDateTime start = new MyLocalDateTime(events.get(position).start);
+        MyLocalDateTime end = new MyLocalDateTime(events.get(position).end);
+        holder.from.setText(start.getDateTime());
+        holder.until.setText(end.getDateTime());
+        holder.fromDay.setText("(" + start.getDay() + ")");
+        holder.untilDay.setText("(" + end.getDay() + ")");
     }
 
     @Override
@@ -77,8 +75,8 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.ViewHolder> 
         }
     }
 
-    Event getItem(int id) {
-        return events.get(id);
+    Event getItem(int pos) {
+        return events.get(pos);
     }
 
     void setClickListener(ItemClickListener itemClickListener) {
@@ -87,9 +85,5 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.ViewHolder> 
 
     public interface ItemClickListener {
         void onItemClick(View view, int eventId);
-    }
-
-    private String formatDate(LocalDateTime date) {
-        return DateTimeFormatter.ofPattern("dd/MM/yyyy hh:mm").format(date);
     }
 }

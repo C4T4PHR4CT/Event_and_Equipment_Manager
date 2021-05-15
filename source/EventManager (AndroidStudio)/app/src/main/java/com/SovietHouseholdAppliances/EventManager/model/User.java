@@ -1,5 +1,7 @@
 package com.SovietHouseholdAppliances.EventManager.model;
 
+import androidx.annotation.NonNull;
+
 public class User
 {
     public Integer id;
@@ -15,5 +17,18 @@ public class User
         this.password = password;
         this.permission = permission;
         this.organization = organization;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof User))
+            return false;
+        return id.equals(((User) obj).id);
+    }
+
+    @NonNull
+    @Override
+    public String toString() {
+        return name;
     }
 }

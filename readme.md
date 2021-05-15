@@ -34,18 +34,18 @@ The delimitations of the project are:
 Must have:
 - [x] login
 - [x] view existing events
-- [ ] view event details (including assigned equipments)
+- [x] view event details (including assigned equipments)
 - [ ] view existing equipments
 - [ ] view equipment details (including assigned events)
-- [ ] create events
-- [ ] delete events
+- [x] create events
+- [x] delete events
 - [ ] create equipments
 - [ ] delete equipments
 
 Should have:
-- [ ] edit event details
+- [x] edit event details
 - [ ] edit equipment details
-- [ ] assign/deassign event’s associated equipments
+- [x] assign/deassign event’s associated equipments
 - [ ] assign/deassign equipment’s associated events
 - [x] view profile
 

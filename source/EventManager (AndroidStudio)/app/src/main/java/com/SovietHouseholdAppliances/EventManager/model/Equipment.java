@@ -1,5 +1,7 @@
 package com.SovietHouseholdAppliances.EventManager.model;
 
+import androidx.annotation.NonNull;
+
 public class Equipment
 {
     public Integer id;
@@ -13,5 +15,18 @@ public class Equipment
         this.name = name;
         this.category = category;
         this.events = events;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof Equipment))
+            return false;
+        return id.equals(((Equipment) obj).id);
+    }
+
+    @NonNull
+    @Override
+    public String toString() {
+        return name;
     }
 }

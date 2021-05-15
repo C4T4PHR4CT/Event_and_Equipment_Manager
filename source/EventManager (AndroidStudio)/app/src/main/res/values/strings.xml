@@ -17,4 +17,10 @@
     <string name="event_until">until</string>
     <string name="event_add_event">add event</string>
     <string name="profile_organization">organization:</string>
+    <string name="cancel_button">cancel</string>
+    <string name="save_button">save</string>
+    <string name="event_name">event name</string>
+    <string name="add_equipment">add equipment</string>
+    <string name="delete_event">delete event</string>
+    <string name="de_assign_equipment">de-assign equipment from event</string>
 </resources>
