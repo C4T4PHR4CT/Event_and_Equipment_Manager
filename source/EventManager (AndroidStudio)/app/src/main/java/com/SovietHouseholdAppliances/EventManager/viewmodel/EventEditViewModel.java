@@ -6,8 +6,11 @@ import androidx.lifecycle.ViewModel;
 
 import com.SovietHouseholdAppliances.EventManager.model.Equipment;
 import com.SovietHouseholdAppliances.EventManager.model.Event;
+import com.SovietHouseholdAppliances.EventManager.model.MyLocalDateTime;
 import com.SovietHouseholdAppliances.EventManager.model.Preferences;
 import com.SovietHouseholdAppliances.EventManager.model.RetrofitClient;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -27,7 +30,10 @@ public class EventEditViewModel extends ViewModel {
         event = new MutableLiveData<>();
         equipments = new MutableLiveData<>();
         alert = new MutableLiveData<>();
-        event.setValue(new Event(0, "", false, 0, 0, new Equipment[0]));
+        MyLocalDateTime start= new MyLocalDateTime();
+        MyLocalDateTime end = new MyLocalDateTime();
+        end.dateTime = end.dateTime.plusDays(1);
+        event.setValue(new Event(0, "", false, start.getEpochMilis(), end.getEpochMilis(), new Equipment[0]));
         equipments.setValue(new Equipment[0]);
         alert.setValue("");
         allEquipments = new Equipment[0];
@@ -73,7 +79,12 @@ public class EventEditViewModel extends ViewModel {
         RetrofitClient.getInstance().getEventManagerApi().updateEvent(Preferences.getInstance().getToken(), event.getValue().id, event.getValue()).enqueue(new Callback<String>() {
             @Override
             public void onResponse(@NonNull Call<String> call, @NonNull Response<String> response) {
-                alert.setValue("done");
+                try {
+                    if (response.errorBody() != null)
+                        alert.setValue(response.errorBody().string());
+                    else
+                        alert.setValue("done");
+                } catch (IOException ignored) {}
             }
             @Override
             public void onFailure(@NonNull Call<String> call, @NonNull Throwable t) {}
@@ -84,7 +95,12 @@ public class EventEditViewModel extends ViewModel {
         RetrofitClient.getInstance().getEventManagerApi().createEvent(Preferences.getInstance().getToken(), event.getValue()).enqueue(new Callback<String>() {
             @Override
             public void onResponse(@NonNull Call<String> call, @NonNull Response<String> response) {
-                alert.setValue("done");
+                try {
+                    if (response.errorBody() != null)
+                        alert.setValue(response.errorBody().string());
+                    else
+                        alert.setValue("done");
+                } catch (IOException ignored) {}
             }
             @Override
             public void onFailure(@NonNull Call<String> call, @NonNull Throwable t) {}
@@ -95,7 +111,12 @@ public class EventEditViewModel extends ViewModel {
         RetrofitClient.getInstance().getEventManagerApi().deleteEvent(Preferences.getInstance().getToken(), event.getValue().id).enqueue(new Callback<String>() {
             @Override
             public void onResponse(@NonNull Call<String> call, @NonNull Response<String> response) {
-                alert.setValue("done");
+                try {
+                    if (response.errorBody() != null)
+                        alert.setValue(response.errorBody().string());
+                    else
+                        alert.setValue("done");
+                } catch (IOException ignored) {}
             }
             @Override
             public void onFailure(@NonNull Call<String> call, @NonNull Throwable t) {}

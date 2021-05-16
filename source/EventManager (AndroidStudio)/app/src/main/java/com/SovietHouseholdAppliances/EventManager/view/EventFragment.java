@@ -22,6 +22,8 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+import static android.app.Activity.RESULT_OK;
+
 public class EventFragment extends Fragment implements EventAdapter.ItemClickListener {
 
     MainActivity activity;
@@ -34,6 +36,8 @@ public class EventFragment extends Fragment implements EventAdapter.ItemClickLis
     FloatingActionButton addEvent;
     RecyclerView recyclerView;
     EventAdapter adapter;
+
+    TextView error;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -98,6 +102,9 @@ public class EventFragment extends Fragment implements EventAdapter.ItemClickLis
         });
 
         activity.viewModel.refreshEvents(null, filter_selected_from.getEpochMilis(), filter_selected_until.getEpochMilis());
+
+        error = activity.findViewById(R.id.event_error);
+        error.setVisibility(View.GONE);
     }
 
     @Override
@@ -118,6 +125,24 @@ public class EventFragment extends Fragment implements EventAdapter.ItemClickLis
         Intent temp = new Intent(activity, EventEditActivity.class);
         temp.putExtra("isEdit", true);
         temp.putExtra("eventId", eventId);
-        activity.startActivity(temp);
+        startActivityForResult(temp, 5);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 5) {
+            if (resultCode == RESULT_OK) {
+                String conflict = data.getStringExtra("conflict");
+                if (conflict != null && !conflict.trim().equals("")) {
+                    error.setVisibility(View.VISIBLE);
+                    error.setText(conflict);
+                }
+                else {
+                    error.setVisibility(View.GONE);
+                    error.setText("");
+                }
+            }
+        }
     }
 }

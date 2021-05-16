@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -87,11 +88,6 @@ public class EventEditActivity extends AppCompatActivity {
         until_time = findViewById(R.id.event_edit_until_time);
         selected_from = new MyLocalDateTime();
         selected_until = new MyLocalDateTime();
-        selected_until.dateTime = selected_until.dateTime.plusDays(1);
-        from_date.setText(selected_from.getDate());
-        from_time.setText(selected_from.getTime());
-        until_date.setText(selected_until.getDate());
-        until_time.setText(selected_until.getTime());
         add_equipment = findViewById(R.id.event_edit_add_equipment);
         recyclerView = findViewById(R.id.event_edit_equipment_list);
 
@@ -108,7 +104,12 @@ public class EventEditActivity extends AppCompatActivity {
             delete.setVisibility(View.GONE);
 
         viewModel.getAlert().observe(this, alert -> {
-            if (alert.equals("done"))
+            if (!alert.equals("done")) {
+                Intent intent = new Intent();
+                intent.putExtra("conflict", alert);
+                setResult(RESULT_OK, intent);
+            }
+            if (alert != null && !alert.trim().equals(""))
                 finish();
         });
 
