@@ -64,19 +64,19 @@ public class EventFragment extends Fragment implements EventAdapter.ItemClickLis
 
         filter_from.setOnClickListener(e -> {
             DatePickerDialog dialog = new DatePickerDialog(activity, (view, year, month, dayOfMonth) -> {
-                filter_selected_from = new MyLocalDateTime(LocalDate.of(year, month, dayOfMonth));
+                filter_selected_from = new MyLocalDateTime(LocalDate.of(year, month + 1, dayOfMonth));
                 filter_from.setText(filter_selected_from.getDate());
                 activity.viewModel.refreshEvents(null, filter_selected_from.getEpochMilis(), filter_selected_until.getEpochMilis());
-            }, filter_selected_from.dateTime.getYear(), filter_selected_from.dateTime.getMonthValue(), filter_selected_from.dateTime.getDayOfMonth());
+            }, filter_selected_from.dateTime.getYear(), filter_selected_from.dateTime.getMonthValue() - 1, filter_selected_from.dateTime.getDayOfMonth());
             dialog.show();
         });
 
         filter_until.setOnClickListener(e -> {
             DatePickerDialog dialog = new DatePickerDialog(activity, (view, year, month, dayOfMonth) -> {
-                filter_selected_until = new MyLocalDateTime(LocalDate.of(year, month, dayOfMonth));
+                filter_selected_until = new MyLocalDateTime(LocalDate.of(year, month + 1, dayOfMonth));
                 filter_until.setText(filter_selected_until.getDate());
                 activity.viewModel.refreshEvents(null, filter_selected_from.getEpochMilis(), filter_selected_until.getEpochMilis());
-            }, filter_selected_until.dateTime.getYear(), filter_selected_until.dateTime.getMonthValue(), filter_selected_until.dateTime.getDayOfMonth());
+            }, filter_selected_until.dateTime.getYear(), filter_selected_until.dateTime.getMonthValue() - 1, filter_selected_until.dateTime.getDayOfMonth());
             dialog.show();
         });
 

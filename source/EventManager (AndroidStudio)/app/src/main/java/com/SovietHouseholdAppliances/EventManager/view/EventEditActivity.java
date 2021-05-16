@@ -171,10 +171,10 @@ public class EventEditActivity extends AppCompatActivity {
 
         from_date.setOnClickListener(e -> {
             DatePickerDialog dialog = new DatePickerDialog(this, (view, year, month, dayOfMonth) -> {
-                selected_from.dateTime = selected_from.dateTime.withYear(year).withMonth(month).withDayOfMonth(dayOfMonth);
+                selected_from.dateTime = selected_from.dateTime.withYear(year).withMonth(month + 1).withDayOfMonth(dayOfMonth);
                 viewModel.setStart(selected_from.getEpochMilis());
                 from_date.setText(selected_from.getDate());
-            }, selected_from.dateTime.getYear(), selected_from.dateTime.getMonthValue(), selected_from.dateTime.getDayOfMonth());
+            }, selected_from.dateTime.getYear(), selected_from.dateTime.getMonthValue() - 1, selected_from.dateTime.getDayOfMonth());
             dialog.show();
         });
 
@@ -189,10 +189,10 @@ public class EventEditActivity extends AppCompatActivity {
 
         until_date.setOnClickListener(e -> {
             DatePickerDialog dialog = new DatePickerDialog(this, (view, year, month, dayOfMonth) -> {
-                selected_until.dateTime = selected_until.dateTime.withYear(year).withMonth(month).withDayOfMonth(dayOfMonth);
+                selected_until.dateTime = selected_until.dateTime.withYear(year).withMonth(month + 1).withDayOfMonth(dayOfMonth);
                 viewModel.setEnd(selected_until.getEpochMilis());
                 until_date.setText(selected_until.getDate());
-            }, selected_until.dateTime.getYear(), selected_until.dateTime.getMonthValue(), selected_until.dateTime.getDayOfMonth());
+            }, selected_until.dateTime.getYear(), selected_until.dateTime.getMonthValue() - 1, selected_until.dateTime.getDayOfMonth());
             dialog.show();
         });
 
