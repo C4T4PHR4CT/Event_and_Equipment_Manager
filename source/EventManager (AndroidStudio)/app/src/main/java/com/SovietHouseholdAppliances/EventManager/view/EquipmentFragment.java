@@ -17,6 +17,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.SovietHouseholdAppliances.EventManager.R;
+import com.SovietHouseholdAppliances.EventManager.model.Equipment;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
@@ -25,7 +26,7 @@ import java.util.List;
 
 import static android.app.Activity.RESULT_OK;
 
-public class EquipmentFragment extends Fragment {
+public class EquipmentFragment extends Fragment implements EquipmentAdapter.ItemClickListener {
 
     MainActivity activity;
 
@@ -35,6 +36,8 @@ public class EquipmentFragment extends Fragment {
     EquipmentAdapter adapter;
 
     TextView error;
+
+    String currentFilter;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -59,11 +62,7 @@ public class EquipmentFragment extends Fragment {
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerView.addItemDecoration(new DividerItemDecoration(recyclerView.getContext(), DividerItemDecoration.VERTICAL));
 
-        activity.viewModel.getEquipments().observe(getViewLifecycleOwner(), equipments -> {
-            /*adapter = new EventAdapter(getContext(), events);
-            adapter.setClickListener(this);
-            recyclerView.setAdapter(adapter);*/
-        });
+        activity.viewModel.getEquipments().observe(getViewLifecycleOwner(), equipments -> setEquipments());
 
         activity.viewModel.refreshEquipments(null);
 
@@ -71,7 +70,7 @@ public class EquipmentFragment extends Fragment {
 
         activity.viewModel.getCategories().observe(getViewLifecycleOwner(), categories -> {
             List<String> spinnerArray =  new ArrayList<>();
-            spinnerArray.add( "- all -");
+            spinnerArray.add("- all -");
             spinnerArray.addAll(Arrays.asList(categories));
             ArrayAdapter<String> adapter = new ArrayAdapter<>(activity, android.R.layout.simple_spinner_item, spinnerArray);
             adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -82,12 +81,11 @@ public class EquipmentFragment extends Fragment {
             @Override
             public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
                 String selected = (String) parentView.getItemAtPosition(position);
-                if (selected.equals("- all -")) {
-                    MainActivity.print("filter deselected");
-                }
-                else {
-                    MainActivity.print("filter \"" + selected + "\" selected");
-                }
+                if (selected.equals("- all -"))
+                    currentFilter = null;
+                else
+                    currentFilter = selected;
+                setEquipments();
             }
             @Override
             public void onNothingSelected(AdapterView<?> parentView) {}
@@ -97,24 +95,45 @@ public class EquipmentFragment extends Fragment {
         error.setVisibility(View.GONE);
     }
 
+    private void setEquipments() {
+        Equipment[] equipments = activity.viewModel.getEquipments().getValue();
+        if (currentFilter != null) {
+            List<Equipment> temp = new ArrayList<>(Arrays.asList(equipments));
+            int count = temp.size();
+            for (int i = 0; i < count; i++)
+                if (!temp.get(i).category.equals(currentFilter)) {
+                    temp.remove(i);
+                    i--;
+                    count--;
+                }
+            equipments = new Equipment[temp.size()];
+            for (int i = 0; i < temp.size(); i++)
+                equipments[i] = temp.get(i);
+        }
+        adapter = new EquipmentAdapter(getContext(), equipments);
+        adapter.setClickListener(this);
+        recyclerView.setAdapter(adapter);
+    }
+
     @Override
     public void onResume() {
         super.onResume();
         activity.viewModel.refreshEquipments(null);
     }
 
-    /*@Override
-    public void onItemClick(View view, int eventId) {
-        Intent temp = new Intent(activity, EventEditActivity.class);
+    @Override
+    public void onItemClick(View view, int equipmentId) {
+        MainActivity.print("equipment " + equipmentId + " (id) clicked");
+        /*Intent temp = new Intent(activity, EventEditActivity.class);
         temp.putExtra("isEdit", true);
-        temp.putExtra("eventId", eventId);
-        startActivityForResult(temp, 5);
-    }*/
+        temp.putExtra("equipmentId", equipmentId);
+        startActivityForResult(temp, 6);*/
+    }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == 5) {
+        if (requestCode == 6) {
             if (resultCode == RESULT_OK) {
                 String conflict = data.getStringExtra("conflict");
                 if (conflict != null && !conflict.trim().equals("")) {

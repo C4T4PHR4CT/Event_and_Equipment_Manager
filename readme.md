@@ -35,7 +35,7 @@ Must have:
 - [x] login
 - [x] view existing events
 - [x] view event details (including assigned equipments)
-- [ ] view existing equipments
+- [x] view existing equipments
 - [ ] view equipment details (including assigned events)
 - [x] create events
 - [x] delete events
