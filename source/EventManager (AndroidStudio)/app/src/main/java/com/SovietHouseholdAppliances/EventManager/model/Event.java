@@ -25,6 +25,8 @@ public class Event
     public boolean equals(Object obj) {
         if (!(obj instanceof Event))
             return false;
+        if (id == null || ((Event) obj).id == null)
+            return false;
         return id.equals(((Event) obj).id);
     }
 

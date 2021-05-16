@@ -36,17 +36,17 @@ Must have:
 - [x] view existing events
 - [x] view event details (including assigned equipments)
 - [x] view existing equipments
-- [ ] view equipment details (including assigned events)
+- [x] view equipment details (including assigned events)
 - [x] create events
 - [x] delete events
-- [ ] create equipments
-- [ ] delete equipments
+- [x] create equipments
+- [x] delete equipments
 
 Should have:
 - [x] edit event details
-- [ ] edit equipment details
+- [x] edit equipment details
 - [x] assign/deassign event’s associated equipments
-- [ ] assign/deassign equipment’s associated events
+- [x] assign/deassign equipment’s associated events
 - [x] view profile
 
 Could have:

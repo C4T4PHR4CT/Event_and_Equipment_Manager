@@ -27,4 +27,8 @@
     <string name="event_and_equipment_manager"><![CDATA[Event & Equipment Manager]]></string>
     <string name="app_description">The purpose of this project is to help companies in the AV industry allocate resources for various events.</string>
     <string name="category">category</string>
+    <string name="equipment_name">equipment name</string>
+    <string name="add_event">add event</string>
+    <string name="delete_equipment">delete equipment</string>
+    <string name="de_assign_event">de-assign event from equipment</string>
 </resources>

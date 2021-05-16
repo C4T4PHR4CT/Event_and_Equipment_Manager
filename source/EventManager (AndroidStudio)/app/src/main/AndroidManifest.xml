@@ -13,6 +13,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.EventEquipmentManager"
         tools:ignore="AllowBackup">
+        <activity android:name=".view.EquipmentEditActivity" />
         <activity android:name=".view.EventEditActivity" />
         <activity android:name=".view.LoginActivity" />
         <activity android:name=".view.MainActivity">

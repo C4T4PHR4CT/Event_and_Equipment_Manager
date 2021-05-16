@@ -21,6 +21,8 @@ public class Equipment
     public boolean equals(Object obj) {
         if (!(obj instanceof Equipment))
             return false;
+        if (id == null || ((Equipment) obj).id == null)
+            return false;
         return id.equals(((Equipment) obj).id);
     }
 

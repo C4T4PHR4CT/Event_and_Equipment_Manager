@@ -52,10 +52,9 @@ public class EquipmentFragment extends Fragment implements EquipmentAdapter.Item
 
         addEquipment = activity.findViewById(R.id.equipment_add);
         addEquipment.setOnClickListener(e -> {
-            MainActivity.print("adding equipment");
-            /*Intent temp = new Intent(activity, EventEditActivity.class);
+            Intent temp = new Intent(activity, EquipmentEditActivity.class);
             temp.putExtra("isEdit", false);
-            activity.startActivity(temp);*/
+            activity.startActivity(temp);
         });
 
         recyclerView = activity.findViewById(R.id.equipment_list);
@@ -123,11 +122,10 @@ public class EquipmentFragment extends Fragment implements EquipmentAdapter.Item
 
     @Override
     public void onItemClick(View view, int equipmentId) {
-        MainActivity.print("equipment " + equipmentId + " (id) clicked");
-        /*Intent temp = new Intent(activity, EventEditActivity.class);
+        Intent temp = new Intent(activity, EquipmentEditActivity.class);
         temp.putExtra("isEdit", true);
         temp.putExtra("equipmentId", equipmentId);
-        startActivityForResult(temp, 6);*/
+        startActivityForResult(temp, 6);
     }
 
     @Override

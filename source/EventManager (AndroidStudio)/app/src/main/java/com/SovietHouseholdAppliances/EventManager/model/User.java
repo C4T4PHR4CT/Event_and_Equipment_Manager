@@ -23,6 +23,8 @@ public class User
     public boolean equals(Object obj) {
         if (!(obj instanceof User))
             return false;
+        if (id == null || ((User) obj).id == null)
+            return false;
         return id.equals(((User) obj).id);
     }
 
