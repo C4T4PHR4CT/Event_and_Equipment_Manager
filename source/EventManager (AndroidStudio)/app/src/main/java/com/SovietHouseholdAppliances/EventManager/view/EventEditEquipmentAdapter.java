@@ -18,8 +18,8 @@ import java.util.List;
 
 public class EventEditEquipmentAdapter extends RecyclerView.Adapter<EventEditEquipmentAdapter.ViewHolder> {
 
-    private List<Equipment> equipments;
-    private LayoutInflater mInflater;
+    private final List<Equipment> equipments;
+    private final LayoutInflater mInflater;
     private ItemClickListener mClickListener;
 
     EventEditEquipmentAdapter(Context context, Equipment[] equipments) {

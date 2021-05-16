@@ -19,8 +19,8 @@ import java.util.List;
 
 public class EventAdapter extends RecyclerView.Adapter<EventAdapter.ViewHolder> {
 
-    private List<Event> events;
-    private LayoutInflater mInflater;
+    private final List<Event> events;
+    private final LayoutInflater mInflater;
     private ItemClickListener mClickListener;
 
     EventAdapter(Context context, Event[] events) {

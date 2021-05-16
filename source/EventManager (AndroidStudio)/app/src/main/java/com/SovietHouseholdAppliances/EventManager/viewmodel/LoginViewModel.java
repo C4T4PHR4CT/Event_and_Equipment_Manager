@@ -1,5 +1,6 @@
 package com.SovietHouseholdAppliances.EventManager.viewmodel;
 
+import androidx.annotation.NonNull;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
@@ -69,7 +70,7 @@ public class LoginViewModel extends ViewModel {
         String basic = "Basic " + Base64.getEncoder().encodeToString((username + ":" + password).getBytes());
         RetrofitClient.getInstance().getEventManagerApi().getToken(basic).enqueue(new Callback<String>() {
             @Override
-            public void onResponse(Call<String> call, Response<String> response) {
+            public void onResponse(@NonNull Call<String> call, @NonNull Response<String> response) {
                 if (response.isSuccessful()) {
                     Preferences.getInstance().setToken("Bearer " + response.body());
                     loginState.setValue("ok");
@@ -83,9 +84,8 @@ public class LoginViewModel extends ViewModel {
                 else
                     loginState.setValue(" ");
             }
-
             @Override
-            public void onFailure(Call<String> call, Throwable t) {
+            public void onFailure(@NonNull Call<String> call, @NonNull Throwable t) {
                 loginState.setValue(t.getMessage());
             }
         });

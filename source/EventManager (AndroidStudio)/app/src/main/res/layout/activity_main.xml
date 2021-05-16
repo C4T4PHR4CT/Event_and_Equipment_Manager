@@ -73,5 +73,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/menu_logout" />
         </LinearLayout>
+
     </com.google.android.material.navigation.NavigationView>
+
 </androidx.drawerlayout.widget.DrawerLayout>

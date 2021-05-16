@@ -8,7 +8,6 @@ import androidx.lifecycle.ViewModel;
 import com.SovietHouseholdAppliances.EventManager.model.*;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -20,13 +19,19 @@ public class MainViewModel extends ViewModel {
     private final MutableLiveData<Class<? extends Fragment>> activeFragment;
     private final MutableLiveData<User> user;
     private final MutableLiveData<Event[]> events;
+    private final MutableLiveData<Equipment[]> equipments;
+    private final MutableLiveData<String[]> categories;
 
     public MainViewModel() {
         activeFragment = new MutableLiveData<>();
         user = new MutableLiveData<>();
         events = new MutableLiveData<>();
+        equipments = new MutableLiveData<>();
+        categories = new MutableLiveData<>();
         user.setValue(new User(0, "", "", "", ""));
         events.setValue(new Event[0]);
+        equipments.setValue(new Equipment[0]);
+        categories.setValue(new String[0]);
         alert = new MutableLiveData<>();
         alert.setValue("");
         if (!getKeepLoggedIn() || Preferences.getInstance().getToken().equals("")) {
@@ -51,6 +56,14 @@ public class MainViewModel extends ViewModel {
 
     public MutableLiveData<Event[]> getEvents() {
         return events;
+    }
+
+    public MutableLiveData<Equipment[]> getEquipments() {
+        return equipments;
+    }
+
+    public MutableLiveData<String[]> getCategories() {
+        return categories;
     }
 
     public void renewToken() {
@@ -96,6 +109,32 @@ public class MainViewModel extends ViewModel {
             }
             @Override
             public void onFailure(@NonNull Call<Event[]> call, @NonNull Throwable t) {
+                alert.setValue("logout");
+            }
+        });
+    }
+
+    public void refreshEquipments(Integer eventId) {
+        RetrofitClient.getInstance().getEventManagerApi().getAllEquipments(Preferences.getInstance().getToken(), eventId).enqueue(new Callback<Equipment[]>() {
+            @Override
+            public void onResponse(@NonNull Call<Equipment[]> call, @NonNull Response<Equipment[]> response) {
+                if (response.body() != null) {
+                    Equipment[] temp1 = response.body();
+                    equipments.setValue(temp1);
+                    ArrayList<String> temp2 = new ArrayList<>();
+                    for (Equipment equipment : temp1)
+                        if (!temp2.contains(equipment.category))
+                            temp2.add(equipment.category);
+                    String[] temp3 = new String[temp2.size()];
+                    for (int i = 0; i < temp2.size(); i++)
+                        temp3[i] = temp2.get(i);
+                    categories.setValue(temp3);
+                }
+                else
+                    alert.setValue("logout");
+            }
+            @Override
+            public void onFailure(@NonNull Call<Equipment[]> call, @NonNull Throwable t) {
                 alert.setValue("logout");
             }
         });

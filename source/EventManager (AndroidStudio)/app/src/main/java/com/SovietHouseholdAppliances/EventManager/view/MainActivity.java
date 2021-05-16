@@ -9,6 +9,7 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -21,6 +22,7 @@ import com.SovietHouseholdAppliances.EventManager.viewmodel.MainViewModel;
 
 public class MainActivity extends AppCompatActivity {
 
+    @SuppressLint("StaticFieldLeak")
     public static Context mainActivity;
 
     MainViewModel viewModel;
@@ -68,9 +70,7 @@ public class MainActivity extends AppCompatActivity {
         logout = findViewById(R.id.menu_logout);
         fragment = findViewById(R.id.fragment);
 
-        menu.setOnClickListener(e -> {
-            openDrawer();
-        });
+        menu.setOnClickListener(e -> openDrawer());
 
         profile.setOnClickListener(e -> {
             closeDrawer();
@@ -87,9 +87,7 @@ public class MainActivity extends AppCompatActivity {
             viewModel.setActiveFragment(EquipmentFragment.class);
         });
 
-        logout.setOnClickListener(e -> {
-            logout();
-        });
+        logout.setOnClickListener(e -> logout());
 
         if (savedInstanceState == null)
             viewModel.setActiveFragment(MainFragment.class);

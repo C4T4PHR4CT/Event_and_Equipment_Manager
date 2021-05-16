@@ -144,9 +144,7 @@ public class EventEditActivity extends AppCompatActivity {
             }
 
             assignedEquipmentAdapter = new EventEditEquipmentAdapter(this, event.equipments);
-            assignedEquipmentAdapter.setClickListener((view, equipment) -> {
-                viewModel.removeEquipment(equipment);
-            });
+            assignedEquipmentAdapter.setClickListener((view, equipment) -> viewModel.removeEquipment(equipment));
             recyclerView.setAdapter(assignedEquipmentAdapter);
         });
 

@@ -81,13 +81,9 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
-        remember.setOnClickListener(e -> {
-            viewModel.setRememberCredentials(remember.isChecked());
-        });
+        remember.setOnClickListener(e -> viewModel.setRememberCredentials(remember.isChecked()));
 
-        login.setOnClickListener(e -> {
-            viewModel.login(username.getText().toString(), password.getText().toString());
-        });
+        login.setOnClickListener(e -> viewModel.login(username.getText().toString(), password.getText().toString()));
     }
 
     @Override

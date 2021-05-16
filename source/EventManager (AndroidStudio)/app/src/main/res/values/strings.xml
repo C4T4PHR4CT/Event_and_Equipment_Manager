@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <string name="app_name">Event &amp; Equipment Manager</string>
     <string name="login_username">username</string>
     <string name="login_password">password</string>
@@ -17,7 +17,7 @@
     <string name="event_until">until</string>
     <string name="event_add_event">add event</string>
     <string name="profile_organization">organization:</string>
-    <string name="cancel_button">cancel</string>
+    <string name="cancel_button" tools:ignore="ButtonCase">cancel</string>
     <string name="save_button">save</string>
     <string name="event_name">event name</string>
     <string name="add_equipment">add equipment</string>
@@ -26,4 +26,5 @@
     <string name="github">source: https://github.com/C4T4PHR4CT/Event_and_Equipment_Manager</string>
     <string name="event_and_equipment_manager"><![CDATA[Event & Equipment Manager]]></string>
     <string name="app_description">The purpose of this project is to help companies in the AV industry allocate resources for various events.</string>
+    <string name="category">category</string>
 </resources>
