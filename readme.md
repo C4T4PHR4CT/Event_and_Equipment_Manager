@@ -1,6 +1,8 @@
 # Event & Equipment Manager
 Levente Nagy 293115
 
+https://youtu.be/8E5v-iWgD4Y
+
 (the following highlights has been copied form docs/Project_Description.pdf and docs/Project_Report.pdf)
 
 ## Project Description
